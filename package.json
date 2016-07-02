@@ -17,7 +17,8 @@
     "jQuery",
     "ajax",
     "img",
-    "responsive"
+    "responsive",
+    "AB-mediaQuery"
   ],
   "author": "Thierry Philippe",
   "license": "ISC"
