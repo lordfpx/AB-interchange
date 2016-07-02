@@ -6,10 +6,19 @@
 
   "use strict";
 
+  function extend(){
+    for (var i=1; i<arguments.length; i++) {
+      for (var key in arguments[i]) {
+        if (arguments[i].hasOwnProperty(key)) arguments[0][key] = arguments[i][key];
+      }
+    }
+    return arguments[0];
+  }
+
   var Interchange = function(element, opt) {
     if (!(this instanceof Interchange)) return new Interchange(element, opt);
 
-    this.settings = AB.fn.extend({}, Interchange.defaults, opt);
+    this.settings = extend({}, Interchange.defaults, opt);
     this.$element = $(element);
     this.rules    = [];
 
