@@ -2,168 +2,121 @@
   if (typeof module != 'undefined') module.exports = definition();
   else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
   else this[name] = definition();
-}('mediaQuery', function() {
+}('interchange', function() {
 
-  'use strict';
+  "use strict";
 
-  function extend(){
-    for (var i=1; i<arguments.length; i++) {
-      for (var key in arguments[i]) {
-        if (arguments[i].hasOwnProperty(key)) arguments[0][key] = arguments[i][key];
-      }
-    }
-    return arguments[0];
-  }
+  var Interchange = function(element, opt) {
+    if (!(this instanceof Interchange)) return new Interchange(element, opt);
 
-  function isJson(str) {
-    try {
-      JSON.parse(str);
-    } catch (e) {
-      return false;
-    }
-    return true;
-  }
+    this.settings = AB.fn.extend({}, Interchange.defaults, opt);
+    this.$element = $(element);
+    this.rules    = [];
 
-  function startsWith(str, prefix) {
-    return str.lastIndexOf(prefix, 0) === 0;
-  }
-
-  // For IE 9 and 10
-  if (typeof window.CustomEvent !== "function") {
-    function CustomEvent(event, params ){
-      params = params || { bubbles: false, cancelable: false, detail: undefined };
-      var evt = document.createEvent( 'CustomEvent' );
-      evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
-      return evt;
-    }
-    CustomEvent.prototype = window.Event.prototype;
-    window.CustomEvent = CustomEvent;
-  }
-
-
-  var MediaQuery = function(opt) {
-    if (!(this instanceof MediaQuery)) return new MediaQuery(opt);
-
-    this.settings = extend({}, MediaQuery.defaults, opt);
-    this.queries  = {};
-    this.current  = [];
-
-    this.init();
+    this.init()
+        ._events();
   };
 
-  MediaQuery.defaults = {
-    bp: {
-      small:    '30em',
-      medium:   '64em',
-      large:    '80em',
-      huge:     '90em'
-    },
-    delay:      200
+  Interchange.defaults = {
+    rules: null
   };
 
-  MediaQuery.prototype = {
+  Interchange.prototype = {
     init: function() {
-      this._defineQueries();
-      this.current = this._getCurrentSize();
-      this._watcher();
+      this._generateRules()
+          ._reflow();
 
       return this;
     },
 
-    _defineQueries: function() {
-      // Create #AB-mediaQuery element to extract mediaQueries from generated font-family CSS rule
-      var meta = document.createElement('meta');
-      meta.id = 'AB-mediaQuery';
-      document.getElementsByTagName('head')[0].appendChild(meta);
+    _generateRules: function() {
+      var rulesList = [],
+          rules;
 
-      var namedQueries = this._getQueries();
+      if (this.settings.rules) {
+        rules = this.settings.rules;
+      }
+      else {
+        rules = this.$element.data('ab-interchange').match(/\[.*?\]/g);
+      }
 
-      // 'tiny' rule since it's specific
-      this.queries['tinyOnly'] = 'screen and (max-width: '+ (parseFloat(namedQueries.small)-0.01) +'em)';
+      for (var i = 0, len = rules.length; i < len; i++) {
+        var rule = rules[i].slice(1, -1).split(', '),
+            path = rule.slice(0, -1).join(''),
+            query = rule[rule.length - 1];
 
-      // define other media queries
-      for (var key in namedQueries) {
-        if (!namedQueries.hasOwnProperty( key )) continue;
+        rulesList.push({
+          path: path,
+          query: query
+        });
+      }
 
-        switch (key) {
-          case 'small':
-            this.queries[key + 'Only'] = 'screen and (min-width: '+ namedQueries[key] +') and (max-width: '+ (parseFloat(namedQueries.medium)-0.01) +'em)';
-            this.queries[key]          = 'screen and (min-width: '+ namedQueries[key] +')';
-            break;
-          case 'medium':
-            this.queries[key + 'Only'] = 'screen and (min-width: '+ namedQueries[key] +') and (max-width: '+ (parseFloat(namedQueries.large)-0.01) +'em)';
-            this.queries[key]          = 'screen and (min-width: '+ namedQueries[key] +')';
-            break;
-          case 'large':
-            this.queries[key + 'Only'] = 'screen and (min-width: '+ namedQueries[key] +') and (max-width: '+ (parseFloat(namedQueries.huge)-0.01) +'em)';
-            this.queries[key]          = 'screen and (min-width: '+ namedQueries[key] +')';
-            break;
-          case 'huge':
-            this.queries[key]          = 'screen and (min-width: '+ namedQueries[key] +')';
-            break;
+      this.rules = rulesList;
+
+      return this;
+    },
+
+    _reflow: function() {
+      var match,
+          path,
+          currentQuery = AB.mediaQuery.current;
+
+      // Iterate through each rule
+      for (var i = 0, len = this.rules.length; i < len; i++) {
+        var rule = this.rules[i];
+
+        if ( window.matchMedia(AB.mediaQuery.get(rule.query)).matches ) {
+          path = rule.path;
+          match = true;
         }
+      }
 
-        // add custom user rules if any:
-        if (startsWith(key, '*')) {
-          this.queries[key.replace('*','')] = namedQueries[key];
-        }
+      if (match) {
+        this._replace(path);
       }
     },
 
-    _getCurrentSize: function() {
-      var that = this,
-          newMediaQueries = [];
+    _events: function() {
+      $(window).on('resize.ab-interchange', this._reflow.bind(this));
+    },
 
-      for (var key in that.queries) {
-        if (!that.queries.hasOwnProperty( key )) continue;
-        if (window.matchMedia(that.queries[key]).matches) newMediaQueries.push(key);
+    _replace: function(path) {
+      if (this.currentPath === path) return;
+
+      var that = this,
+          trigger = 'replaced.ab-interchange';
+
+      // Replacing images
+      if (this.$element[0].nodeName === 'IMG') {
+        this.$element.attr('src', path).load(function() {
+          that.currentPath = path;
+        }).trigger(trigger);
       }
-
-      //if (typeof matched === 'object') return matched.name;
-      return newMediaQueries;
-    },
-
-    _getQueries: function() {
-      var metaMD = document.getElementById('AB-mediaQuery'),
-          fontMD = window.getComputedStyle(metaMD, null).getPropertyValue("font-family"),
-          extractedStyles = decodeURI(fontMD.trim().slice(1, -1));
-
-      return isJson(extractedStyles) ? JSON.parse(extractedStyles) : this.settings.bp;
-    },
-
-    get: function(size) {
-      if (typeof size === 'undefined') return;
-      return this.queries[size];
-    },
-
-    _watcher: function() {
-      var that = this,
-          event = new Event('changed.ab-mediaquery'),
-          newSize, resizeTimer;
-
-      window.onresize = function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function() {
-          newSize = that._getCurrentSize();
-
-          if (newSize.join('|') !== that.current.join('|')) {
-            that.current = newSize;
-            window.dispatchEvent(event);
-          }
-        }, that.settings.delay);
-      };
-    },
-
-    is: function(size) {
-      var query = this.get(size);
-      if (query) return window.matchMedia(query).matches;
+      // Replacing background images
+      else if (path.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i)) {
+        this.$element.css({ 'background-image': 'url('+path+')' }).trigger(trigger);
+      }
+      // Replacing HTML
+      else {
+        $.get(path, function(response) {
+          that.$element.html(response).trigger(trigger);
+          that.currentPath = path;
+        });
+      }
     }
   };
 
-  function mediaQuery(opt) {
-    if (typeof window.AB === 'undefined') window.AB = {};
-    window.AB.mediaQuery = new MediaQuery(opt);
+  function interchange(opt){
+    var elements = document.querySelectorAll('[data-ab-interchange]');
+
+    for (var i = 0, len = elements.length; i < len; i++) {
+      if (!elements[i].dataset.plugin_interchange) {
+        elements[i].dataset.plugin_interchange = new Interchange(elements[i], opt);
+      }
+    }
   }
 
-  return mediaQuery;
+
+
+  return interchange;
 }));
