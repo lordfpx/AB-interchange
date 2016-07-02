@@ -1,4 +1,4 @@
-# AB-mediaQuery
+# AB-interchange
 
 hile responsive image loading is not really an easy task even today, here is a solution to manage conditional (based on breakpoints) loading of img, background-image or even HTML content.
 Heavily inspired by https://github.com/zurb/foundation-sites.
