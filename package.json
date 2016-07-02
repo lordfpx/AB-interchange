@@ -1,0 +1,24 @@
+{
+  "name": "ab-interchange",
+  "version": "1.0.0",
+  "description": "AB-interchange: While responsive image loading is not really an easy task even today, here is a solution to manage conditional (based on breakpoints) loading of img, background-image or even HTML content.",
+  "main": "ab-interchange.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lordfpx/AB-interchange.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "javascript",
+    "mediaquery",
+    "breakpoint",
+    "jQuery",
+    "ajax",
+    "img",
+    "responsive"
+  ],
+  "author": "Thierry Philippe",
+  "license": "ISC"
+}
