@@ -46,7 +46,7 @@
         rules = this.settings.rules;
       }
       else {
-        rules = this.$element.data('ab-interchange').match(/\[.*?\]/g);
+        rules = this.$element.data('ab-interchange').match(/\[[^\]]+\]/g);
       }
 
       for (var i = 0, len = rules.length; i < len; i++) {
@@ -124,8 +124,6 @@
       }
     }
   }
-
-
 
   return interchange;
 }));

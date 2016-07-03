@@ -21,5 +21,8 @@
     "AB-mediaQuery"
   ],
   "author": "Thierry Philippe",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ab-mediaquery": "1.2.0"
+  }
 }
