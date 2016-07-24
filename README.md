@@ -24,9 +24,9 @@ You will need jQuery (https://jquery.com/), but I have plan to remove that depen
 
 The other dependency is AB-mediaQuery (https://github.com/lordfpx/AB-mediaQuery).
 
-Install AB-mediaQuery following your needs (or only `mediaQuery()` for default configuration).
+Install AB-mediaQuery following your needs (or only `abMediaQuery()` for default configuration).
 
-The you only need to initialize with `ìnterchange()`.
+The you only need to initialize with `abInterchange()`.
 
 data-ab-interchange attribute should contain a list of arrays with your needed breakpoints as defined in AB-mediaQuery. Defaults values are :
 * small

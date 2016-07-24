@@ -1,8 +1,12 @@
 !(function(name, definition) {
-  if (typeof module != 'undefined') module.exports = definition();
-  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
-  else this[name] = definition();
-}('interchange', function() {
+  if (typeof module != 'undefined') {
+    module.exports = definition();
+  } else if (typeof define == 'function' && typeof define.amd == 'object') {
+    define(definition);
+  } else {
+    this[name] = definition();
+  }
+}('abInterchange', function() {
 
   "use strict";
 
@@ -81,25 +85,34 @@
       }
 
       if (match) {
+        console.log(this.currentPath, path);
         this._replace(path);
+      } else {
+        this._replace("");
+        this.currentPath = path;
       }
     },
 
     _events: function() {
-      $(window).on('resize.ab-interchange', this._reflow.bind(this));
+      var that = this;
+
+      window.addEventListener('changed.ab-mediaquery', function(){
+        that._reflow();
+      });
     },
 
     _replace: function(path) {
       if (this.currentPath === path) return;
+
+      // update current path
+      this.currentPath = path;
 
       var that = this,
           trigger = 'replaced.ab-interchange';
 
       // Replacing images
       if (this.$element[0].nodeName === 'IMG') {
-        this.$element.attr('src', path).load(function() {
-          that.currentPath = path;
-        }).trigger(trigger);
+        this.$element.attr('src', path).load().trigger(trigger);
       }
       // Replacing background images
       else if (path.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i)) {
@@ -109,13 +122,12 @@
       else {
         $.get(path, function(response) {
           that.$element.html(response).trigger(trigger);
-          that.currentPath = path;
         });
       }
     }
   };
 
-  function interchange(opt){
+  function abInterchange(opt){
     var elements = document.querySelectorAll('[data-ab-interchange]');
 
     for (var i = 0, len = elements.length; i < len; i++) {
@@ -125,5 +137,5 @@
     }
   }
 
-  return interchange;
+  return abInterchange;
 }));
