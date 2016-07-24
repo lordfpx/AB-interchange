@@ -53,5 +53,5 @@ data-ab-interchange attribute should contain a list of arrays with your needed b
 If the data-ab-interchange is neither an image format nor on an img tag, that will send and http request and put the response inside the element.
 
 ```
-<div data-ab-interchange="[small-content.html, small], [medium-content.html, medium], [large-content.html.jpg, large]"></div>
+<div data-ab-interchange="[small-content.html, small], [medium-content.html, medium], [large-content.html, large]"></div>
 ```
