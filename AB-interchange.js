@@ -85,7 +85,6 @@
       }
 
       if (match) {
-        console.log(this.currentPath, path);
         this._replace(path);
       } else {
         this._replace("");
@@ -120,9 +119,13 @@
       }
       // Replacing HTML
       else {
-        $.get(path, function(response) {
-          that.$element.html(response).trigger(trigger);
-        });
+        if (path === "") {
+          that.$element.empty();
+        } else {
+          $.get(path, function(response) {
+            that.$element.html(response).trigger(trigger);
+          });
+        }
       }
     }
   };
