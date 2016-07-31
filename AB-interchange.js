@@ -34,8 +34,9 @@
   };
 
   Interchange.defaults = {
-    lazy    : false,
-    delay   : 100
+    lazy      : true,
+    delay     : 100,
+    offscreen : 1.5
   };
 
   Interchange.prototype = {
@@ -127,7 +128,9 @@
     },
 
     _inView: function() {
-      return this.element.getBoundingClientRect().top + $(window).scrollTop() <= $(window).scrollTop() + window.innerHeight;
+      var scrollTop     = $(window).scrollTop(),
+          windowHeight  = window.innerHeight;
+      return this.element.getBoundingClientRect().top - windowHeight * this.settings.offscreen + scrollTop <= scrollTop + windowHeight;
     },
 
     _replace: function() {

@@ -29,8 +29,9 @@ Install AB-mediaQuery following your needs (or only `abMediaQuery()` for default
 Then you only need to initialize with `abInterchange()` or with options:
 ```
 abInterchange({
-  lazy: false,  // or true
-  delay: 100    // debounce time on scroll event (only when lazy loading is true)
+  lazy      : false,// or true
+  delay     : 100   // debounce time on scroll event (only when lazy loading is true)
+  offscreen : 1.5   // load items only when in the view + 0.5
 });
 ```
 
