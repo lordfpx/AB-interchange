@@ -1,14 +1,14 @@
 !(function(name, definition) {
-  if (typeof module != 'undefined') {
+  if (typeof module !== 'undefined') {
     module.exports = definition();
-  } else if (typeof define == 'function' && typeof define.amd == 'object') {
+  } else if (typeof define === 'function' && typeof define.amd === 'object') {
     define(definition);
   } else {
     this[name] = definition();
   }
 }('abInterchange', function() {
 
-  "use strict";
+  'use strict';
 
   function extend(){
     for (var i=1; i<arguments.length; i++) {
@@ -22,22 +22,26 @@
   var Interchange = function(element, opt) {
     if (!(this instanceof Interchange)) return new Interchange(element, opt);
 
-    this.settings = extend({}, Interchange.defaults, opt);
-    this.$element = $(element);
-    this.rules    = [];
+    this.settings     = extend({}, Interchange.defaults, opt);
+    this.element      = element;
+    this.$element     = $(element);
+    this.rules        = [];
+    this.currentPath  = '';
+    this.defaultPath  = '';
 
     this.init()
         ._events();
   };
 
   Interchange.defaults = {
-    rules: null
+    lazy    : false,
+    delay   : 100
   };
 
   Interchange.prototype = {
     init: function() {
       this._generateRules()
-          ._reflow();
+          ._updatePath();
 
       return this;
     },
@@ -48,15 +52,14 @@
 
       if (this.settings.rules) {
         rules = this.settings.rules;
-      }
-      else {
+      } else {
         rules = this.$element.data('ab-interchange').match(/\[[^\]]+\]/g);
       }
 
       for (var i = 0, len = rules.length; i < len; i++) {
-        var rule = rules[i].slice(1, -1).split(', '),
-            path = rule.slice(0, -1).join(''),
-            query = rule[rule.length - 1];
+        var rule    = rules[i].slice(1, -1).split(', '),
+            path    = rule.slice(0, -1).join(''),
+            query   = rule[rule.length - 1];
 
         rulesList.push({
           path: path,
@@ -69,64 +72,90 @@
       return this;
     },
 
-    _reflow: function() {
-      var match,
-          path,
-          currentQuery = AB.mediaQuery.current;
+    _updatePath: function() {
+      var match         = false,
+          path          = '',
+          rules         = this.rules,
+          currentQuery  = AB.mediaQuery.current;
 
       // Iterate through each rule
-      for (var i = 0, len = this.rules.length; i < len; i++) {
-        var rule = this.rules[i];
+      for (var i = 0, len = rules.length; i < len; i++) {
+        var rule  = rules[i];
 
-        if ( window.matchMedia(AB.mediaQuery.get(rule.query)).matches ) {
-          path = rule.path;
+        // check if default value is provided
+        if (rule.query === 'default' && this.defaultPath === '') {
+          this.defaultPath = rule.path;
+        }
+
+        if (window.matchMedia(AB.mediaQuery.get(rule.query)).matches) {
+          path  = rule.path;
           match = true;
         }
       }
 
-      if (match) {
-        this._replace(path);
-      } else {
-        this._replace("");
-        this.currentPath = path;
+      // set new current path
+      this.currentPath = (path === '') ? this.defaultPath : path;
+
+      this._replace();
+      return this;
+
+    },
+
+    _onScroll: function() {
+      if (this._inView()) {
+        this._replace();
       }
     },
 
     _events: function() {
-      var that = this;
+      var that = this,
+          scrollTimer;
 
       window.addEventListener('changed.ab-mediaquery', function(){
-        that._reflow();
+        // updata path then replace
+        that._updatePath();
       });
+
+      if (this.settings.lazy) {
+        window.addEventListener('scroll', function() {
+          clearTimeout(scrollTimer);
+          scrollTimer = setTimeout(function() {
+            that._onScroll.call(that);
+          }, that.settings.delay);
+        });
+      }
     },
 
-    _replace: function(path) {
-      if (this.currentPath === path) return;
+    _inView: function() {
+      return this.element.getBoundingClientRect().top + $(window).scrollTop() <= $(window).scrollTop() + window.innerHeight;
+    },
 
-      // update current path
-      this.currentPath = path;
-
+    _replace: function() {
       var that = this,
+          path = that.currentPath,
           trigger = 'replaced.ab-interchange';
 
-      // Replacing images
-      if (this.$element[0].nodeName === 'IMG') {
-        this.$element.attr('src', path).load().trigger(trigger);
-      }
-      // Replacing background images
-      else if (path.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i)) {
-        this.$element.css({ 'background-image': 'url('+path+')' }).trigger(trigger);
-      }
-      // Replacing HTML
-      else {
-        if (path === "") {
-          that.$element.empty();
-        } else {
-          $.get(path, function(response) {
-            that.$element.html(response).trigger(trigger);
-          });
+      if ( !this.settings.lazy || (this.settings.lazy && this._inView()) ) {
+        // Replacing images
+        if (this.$element[0].nodeName === 'IMG') {
+          this.$element.attr('src', path).load().trigger(trigger);
+        }
+        // Replacing background images
+        else if (path.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i)) {
+          this.$element.css({ 'background-image': 'url('+path+')' }).trigger(trigger);
+        }
+        // Replacing HTML
+        else {
+          if (path === "") {
+            that.$element.empty();
+          } else {
+            $.get(path, function(response) {
+              that.$element.html(response).trigger(trigger);
+            });
+          }
         }
       }
+
     }
   };
 
