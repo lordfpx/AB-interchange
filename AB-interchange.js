@@ -42,6 +42,7 @@
   Interchange.prototype = {
     init: function() {
       this._generateRules()
+          ._setDefault()
           ._updatePath();
 
       return this;
@@ -73,6 +74,23 @@
       return this;
     },
 
+    _setDefault: function() {
+      var path              = '',
+          rules             = this.rules;
+
+      // Iterate through each rule
+      for (var i = 0, len = rules.length; i < len; i++) {
+        var rule  = rules[i];
+
+        // check if default value is provided
+        if (rule.query === 'default' && this.defaultPath === '') {
+          this.defaultPath = rule.path;
+        }
+      }
+
+      return this;
+    },
+
     _updatePath: function() {
       var match         = false,
           path          = '',
@@ -83,23 +101,16 @@
       for (var i = 0, len = rules.length; i < len; i++) {
         var rule  = rules[i];
 
-        // check if default value is provided
-        if (rule.query === 'default' && this.defaultPath === '') {
-          this.defaultPath = rule.path;
-        }
-
         if (window.matchMedia(AB.mediaQuery.get(rule.query)).matches) {
           path  = rule.path;
           match = true;
         }
       }
 
-      // set new current path
       this.currentPath = (path === '') ? this.defaultPath : path;
 
       this._replace();
       return this;
-
     },
 
     _onScroll: function() {
@@ -134,22 +145,29 @@
     },
 
     _replace: function() {
-      var that = this,
-          path = that.currentPath,
+      var that    = this,
+          path    = that.currentPath,
           trigger = 'replaced.ab-interchange';
 
-      if ( !this.settings.lazy || (this.settings.lazy && this._inView()) ) {
+      if ( !that.settings.lazy || (that.settings.lazy && that._inView()) ) {
+
         // Replacing images
-        if (this.$element[0].nodeName === 'IMG') {
-          this.$element.attr('src', path).load().trigger(trigger);
+        if (that.$element[0].nodeName === 'IMG') {
+          that.$element.attr('src', path).load().trigger(trigger);
         }
+
         // Replacing background images
-        else if (path.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i)) {
-          this.$element.css({ 'background-image': 'url('+path+')' }).trigger(trigger);
+        else if (path.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i) || path === 'empty.bg') {
+          if (path === 'empty.bg') {
+            that.$element.css({ 'background-image': 'none' }).trigger(trigger);
+          } else {
+            that.$element.css({ 'background-image': 'url('+path+')' }).trigger(trigger);
+          }
         }
+
         // Replacing HTML
         else {
-          if (path === "") {
+          if (path === 'empty.ajax') {
             that.$element.empty();
           } else {
             $.get(path, function(response) {
@@ -157,8 +175,8 @@
             });
           }
         }
-      }
 
+      }
     }
   };
 
