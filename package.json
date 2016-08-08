@@ -23,6 +23,6 @@
   "author": "Thierry Philippe",
   "license": "ISC",
   "dependencies": {
-    "ab-mediaquery": "^1.3.2"
+    "ab-mediaquery": "^1.4.0"
   }
 }
