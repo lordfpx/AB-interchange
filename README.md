@@ -37,9 +37,17 @@ abInterchange({
 
 **data-ab-interchange** attribute should contain a list of arrays with your needed breakpoints as defined in AB-mediaQuery AND a default image that will be loaded when matching is false. Defaults values are :
 * small
+* smallOnly
 * medium
+* mediumOnly
 * large
+* largeOnly
 * huge
+* hugeOnly
+
+If you don't want any default, you can use these values to empty content, but NOT for IMG:
+* [empty.bg, default]
+* [empty.ajax, default]
 
 It's clever to prepare a spinner animation as first img src or default styling before init. You can use **'replaced.ab-interchange'** event to remove that right after.
 
