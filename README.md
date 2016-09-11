@@ -37,13 +37,14 @@ The other dependency is [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaqu
 Follow AB-mediaQuery readme to configure it the way you like depending on your needs (or init it with `abMediaQuery()` for default configuration).
 
 Then you only need to initialize with `abInterchange()` or with options:
-```
-abInterchange({
-  lazy      : false, // or true
-  delay     : 100    // debounce time on scroll event (only when lazy loading is true)
-  offscreen : 1.5    // load items only when in the view + 0.5 by default
-});
-```
+
+  ```
+  abInterchange({
+    lazy      : false, // or true
+    delay     : 100    // debounce time on scroll event (only when lazy loading is true)
+    offscreen : 1.5    // load items only when in the view + 0.5 by default
+  });
+  ```
 
 **data-ab-interchange** attribute should contain a list of arrays with the path to the asset and the breakpoint name as defined in AB-mediaQuery. Beware to respect mobile first order!
 
@@ -69,21 +70,22 @@ It's clever to prepare a spinner animation as first img src (or default CSS styl
 
 ### **img**
 
-```
-<img
-  src="spinner.gif"
-  data-ab-interchange="[path/to/default/img, default], [path/to/small/img, small], [path/to/medium/img, medium]"
->
-```
+  ```
+  <img
+    src="spinner.gif"
+    data-ab-interchange="[path/to/default/img, default], [path/to/small/img, small], [path/to/medium/img, medium]"
+  >
+  ```
 
 
 ### **background-image**
 
 To determine if it's a background-image changing, the script look for image file extensions (`gif|jpg|jpeg|tiff|png`).
 
-```
-<div data-ab-interchange="[empty.bg, default], [path/to/medium/img, medium]"></div>
-```
+  ```
+  <div data-ab-interchange="[empty.bg, default], [path/to/medium/img, medium]"></div>
+  ```
+
 It this example, the will not be any background-image on small devices.
 
 
@@ -91,6 +93,6 @@ It this example, the will not be any background-image on small devices.
 
 If the data-ab-interchange is neither an image format nor on an img tag, that will send and http request and put the response inside the element.
 
-```
-<div data-ab-interchange="[path/to/default/http/request, default], [path/to/small/http/request, small], [path/to/medium/http/request, medium]"></div>
-```
+  ```
+  <div data-ab-interchange="[path/to/default/http/request, default], [path/to/small/http/request, small], [path/to/medium/http/request, medium]"></div>
+  ```
