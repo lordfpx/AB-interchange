@@ -117,6 +117,7 @@
       if (this._inView()) {
         this._replace();
       }
+      return this;
     },
 
     _events: function() {
@@ -141,7 +142,7 @@
     _inView: function() {
       var scrollTop     = $(window).scrollTop(),
           windowHeight  = window.innerHeight;
-      return this.element.getBoundingClientRect().top - windowHeight * this.settings.offscreen + scrollTop <= scrollTop + windowHeight;
+      return this.element.getBoundingClientRect().top + scrollTop  <= scrollTop + windowHeight * this.settings.offscreen;
     },
 
     _replace: function() {
