@@ -28,22 +28,50 @@
     this.rules        = [];
     this.currentPath  = '';
     this.defaultPath  = '';
+    this.mode         = 'img';
 
-    this.init()
-        ._events();
+    this.preInit();
   };
 
   Interchange.defaults = {
-    lazy      : true,
-    delay     : 100,
-    offscreen : 1.5
+    lazy            : true,
+    delay           : 100,
+    offscreen       : 1.5
   };
 
   Interchange.prototype = {
+    preInit: function() {
+      if (this.$element.closest('picture').length && window.HTMLPictureElement) {
+        return this;
+      }
+
+      this.init();
+    },
+
     init: function() {
-      this._generateRules()
+      this._events()
+          ._generateRules()
           ._setDefault()
           ._updatePath();
+
+      return this;
+    },
+
+    _defineMode: function() {
+      // Replacing images
+      if (this.$element[0].nodeName === 'IMG') {
+        return 'img';
+      }
+
+      // Replacing background images
+      else if (this.currentPath.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i) || this.currentPath === 'empty.bg') {
+        return 'bg';
+      }
+
+      // Replacing HTML
+      else {
+        return 'ajax';
+      }
 
       return this;
     },
@@ -129,7 +157,7 @@
         that._updatePath();
       });
 
-      if (this.settings.lazy) {
+      if (that.settings.lazy) {
         window.addEventListener('scroll', function() {
           clearTimeout(scrollTimer);
           scrollTimer = setTimeout(function() {
@@ -137,6 +165,8 @@
           }, that.settings.delay);
         });
       }
+
+      return that;
     },
 
     _inView: function() {
@@ -150,24 +180,21 @@
           path    = that.currentPath,
           trigger = 'replaced.ab-interchange';
 
+      that.mode = that._defineMode();
+
       if ( !that.settings.lazy || (that.settings.lazy && that._inView()) ) {
 
-        // Replacing images
-        if (that.$element[0].nodeName === 'IMG') {
+        if (that.mode === 'img') {
           that.$element.attr('src', path).load().trigger(trigger);
-        }
 
-        // Replacing background images
-        else if (path.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i) || path === 'empty.bg') {
+        } else if (that.mode === 'bg') {
           if (path === 'empty.bg') {
             that.$element.css({ 'background-image': 'none' }).trigger(trigger);
           } else {
             that.$element.css({ 'background-image': 'url('+path+')' }).trigger(trigger);
           }
-        }
 
-        // Replacing HTML
-        else {
+        } else {
           if (path === 'empty.ajax') {
             that.$element.empty();
           } else {
