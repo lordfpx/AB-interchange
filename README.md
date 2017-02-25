@@ -7,6 +7,8 @@ Responsive image loading is not an easy task even nowadays. Here is a solution t
 
 That plugin also has an lazy-loading option!
 
+It's used on French website [ENGIE](https://particuliers.engie.fr/).
+
 It's inspired by [Zurb Foundation](https://github.com/zurb/foundation-sites).
 
 Here is a demo page: [Codepen](http://codepen.io/lordfpx/pen/yJbwrK)
