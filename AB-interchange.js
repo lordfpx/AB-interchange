@@ -1,4 +1,4 @@
-!(function(name, definition) {
+;(function(name, definition) {
   if (typeof module !== 'undefined') {
     module.exports = definition();
   } else if (typeof define === 'function' && typeof define.amd === 'object') {
@@ -11,9 +11,12 @@
   'use strict';
 
   function extend(){
-    for (var i=1; i<arguments.length; i++) {
+    for (var i = 1, len = arguments.length; i < len; i++) {
+      if (!arguments[i]) continue;
+
       for (var key in arguments[i]) {
-        if (arguments[i].hasOwnProperty(key)) arguments[0][key] = arguments[i][key];
+        if (!arguments[i].hasOwnProperty(key)) continue;
+        arguments[0][key] = arguments[i][key];
       }
     }
     return arguments[0];
@@ -41,9 +44,9 @@
 
   Interchange.prototype = {
     preInit: function() {
-      if (this.$element.closest('picture').length && window.HTMLPictureElement) {
+      // no need for a plugin in case of 'picture' with good support
+      if (this.$element.closest('picture').length && window.HTMLPictureElement)
         return this;
-      }
 
       this.init();
     },
@@ -58,22 +61,16 @@
     },
 
     _defineMode: function() {
-      // Replacing images
-      if (this.$element[0].nodeName === 'IMG') {
+      // images
+      if (this.element.nodeName === 'IMG')
         return 'img';
-      }
 
-      // Replacing background images
-      else if (this.currentPath.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i) || this.currentPath === 'empty.bg') {
+      // background images
+      if (this.currentPath.match(/\.(gif|jpg|jpeg|tiff|png)([?#].*)?/i) || this.currentPath === 'empty.bg')
         return 'bg';
-      }
 
-      // Replacing HTML
-      else {
-        return 'ajax';
-      }
-
-      return this;
+      // HTML
+      return 'ajax';
     },
 
     _generateRules: function() {
@@ -87,9 +84,9 @@
       }
 
       for (var i = 0, len = rules.length; i < len; i++) {
-        var rule    = rules[i].slice(1, -1).split(', '),
-            path    = rule.slice(0, -1).join(''),
-            query   = rule[rule.length - 1];
+        var rule  = rules[i].slice(1, -1).split(', '),
+            path  = rule.slice(0, -1).join(''),
+            query = rule[rule.length - 1];
 
         rulesList.push({
           path: path,
@@ -103,12 +100,13 @@
     },
 
     _setDefault: function() {
-      var path              = '',
-          rules             = this.rules;
+      var path  = '',
+          rules = this.rules,
+          rule;
 
       // Iterate through each rule
       for (var i = 0, len = rules.length; i < len; i++) {
-        var rule  = rules[i];
+        rule = rules[i];
 
         // check if default value is provided
         if (rule.query === 'default' && this.defaultPath === '') {
@@ -120,14 +118,15 @@
     },
 
     _updatePath: function() {
-      var match         = false,
-          path          = '',
-          rules         = this.rules,
-          currentQuery  = AB.mediaQuery.current;
+      var match        = false,
+          path         = '',
+          rules        = this.rules,
+          currentQuery = AB.mediaQuery.current,
+          rule;
 
       // Iterate through each rule
       for (var i = 0, len = rules.length; i < len; i++) {
-        var rule  = rules[i];
+        rule = rules[i];
 
         if (window.matchMedia(AB.mediaQuery.get(rule.query)).matches) {
           path  = rule.path;
@@ -142,9 +141,9 @@
     },
 
     _onScroll: function() {
-      if (this._inView()) {
+      if (this._inView())
         this._replace();
-      }
+
       return this;
     },
 
@@ -152,10 +151,8 @@
       var that = this,
           scrollTimer;
 
-      window.addEventListener('changed.ab-mediaquery', function(){
-        // updata path then replace
-        that._updatePath();
-      });
+      // updata path then replace
+      window.addEventListener('changed.ab-mediaquery', that._updatePath.bind(that));
 
       if (that.settings.lazy) {
         window.addEventListener('scroll', function() {
@@ -170,8 +167,8 @@
     },
 
     _inView: function() {
-      var scrollTop     = $(window).scrollTop(),
-          windowHeight  = window.innerHeight;
+      var scrollTop    = $(window).scrollTop(),
+          windowHeight = window.innerHeight;
       return this.element.getBoundingClientRect().top + scrollTop  <= scrollTop + windowHeight * this.settings.offscreen;
     },
 
@@ -183,38 +180,42 @@
       that.mode = that._defineMode();
 
       if ( !that.settings.lazy || (that.settings.lazy && that._inView()) ) {
-
+        // images
         if (that.mode === 'img') {
           that.$element.attr('src', path).load().trigger(trigger);
+          return that;
+        }
 
-        } else if (that.mode === 'bg') {
+        // background images
+        if (that.mode === 'bg') {
           if (path === 'empty.bg') {
             that.$element.css({ 'background-image': 'none' }).trigger(trigger);
           } else {
             that.$element.css({ 'background-image': 'url('+path+')' }).trigger(trigger);
           }
-
-        } else {
-          if (path === 'empty.ajax') {
-            that.$element.empty();
-          } else {
-            $.get(path, function(response) {
-              that.$element.html(response).trigger(trigger);
-            });
-          }
+          return that;
         }
 
+        // HTML
+        if (path === 'empty.ajax') {
+          that.$element.empty();
+        } else {
+          $.get(path, function(response) {
+            that.$element.html(response).trigger(trigger);
+          });
+        }
+
+        return that;
       }
     }
   };
 
-  function abInterchange(opt){
+  function abInterchange(options){
     var elements = document.querySelectorAll('[data-ab-interchange]');
 
     for (var i = 0, len = elements.length; i < len; i++) {
-      if (!elements[i].getAttribute('data-plugin_interchange')) {
-        elements[i].setAttribute('data-plugin_interchange', new Interchange(elements[i], opt));
-      }
+      if (elements[i].abInterchange) continue;
+      elements[i].abInterchange = new Interchange(elements[i], options);
     }
   }
 

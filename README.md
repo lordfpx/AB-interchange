@@ -1,11 +1,11 @@
 # AB-interchange
 
-Responsive image loading is not really an easy task even today, here is a solution to manage conditional (based on breakpoints) loading of:
-- img
-- background-image
-- HTML content
+Responsive image loading is not an easy task even nowadays. Here is a solution to manage conditional (based on breakpoints) loading of:
+- **img** (even **picture** on unsupported browsers)
+- **background-image**
+- **HTML content**
 
-That plugin also has an lazy-loading option!.
+That plugin also has an lazy-loading option!
 
 It's inspired by [Zurb Foundation](https://github.com/zurb/foundation-sites).
 
@@ -80,7 +80,7 @@ It's clever to prepare a spinner animation as first img src (or default CSS styl
 
 ### **background-image**
 
-To determine if it's a background-image changing, the script look for image file extensions (`gif|jpg|jpeg|tiff|png`).
+To determine if it's a background-image changing, the script looks for image file extensions (`gif|jpg|jpeg|tiff|png`).
 
   ```
   <div data-ab-interchange="[empty.bg, default], [path/to/medium/img, medium]"></div>
