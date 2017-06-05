@@ -8,8 +8,6 @@ AB-interchange is a pure JavaScript file that makes possible to conditionnaly lo
 
 That plugin also has an **lazy-loading** option!
 
-- [Codepen](http://codepen.io/lordfpx/pen/yJbwrK)
-
 - [NPM](https://www.npmjs.com/package/ab-interchange)
 
 ```
@@ -21,6 +19,8 @@ or
 ```
 
 The plugin is **CommonJS** and **AMD** compliant (UMD).
+
+It's used on French website [ENGIE](https://particuliers.engie.fr/).
 
 ---
 
