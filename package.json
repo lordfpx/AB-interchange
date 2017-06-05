@@ -1,6 +1,6 @@
 {
   "name": "ab-interchange",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "AB-interchange: While responsive image loading is not really an easy task even today, here is a solution to manage conditional (based on breakpoints) loading of img, background-image or even HTML content.",
   "main": "ab-interchange.js",
   "repository": {

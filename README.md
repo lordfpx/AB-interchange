@@ -8,14 +8,15 @@ AB-interchange is a pure JavaScript file that makes possible to conditionnaly lo
 
 That plugin also has an **lazy-loading** option!
 
+- [codepen](https://codepen.io/lordfpx/pen/jApqLW)
 - [NPM](https://www.npmjs.com/package/ab-interchange)
 
 ```
-> npm install ab-mediaquery
+> npm install ab-interchange
 ```
 or
 ```
-> yarn add ab-mediaquery
+> yarn add ab-interchange
 ```
 
 The plugin is **CommonJS** and **AMD** compliant (UMD).
@@ -33,6 +34,7 @@ You can either loads those scripts or import them (with browserify or webpack fo
 ```
 import AB from 'another-brick';
 import abMediaQuery from 'ab-mediaquery';
+import abInterchange from 'ab-interchange';
 ```
 
 ---
@@ -62,7 +64,7 @@ abMediaQuery({
 Then you only need to initialize with `AB.interchange()` or with options:
 
 ```
-AB.interchange({
+abInterchange({
   mode      : 'img"
   lazy      : true, // or false
   delay     : 100   // debounce time on scroll event (only when lazy loading is true)
