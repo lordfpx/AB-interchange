@@ -67,8 +67,8 @@ Then you only need to initialize with `AB.interchange()` or with options:
 abInterchange({
   mode      : 'img"
   lazy      : true, // or false
-  delay     : 100   // debounce time on scroll event (only when lazy loading is true)
-  offscreen : 1.5    // load items only when in the view + 0.5 by default
+  delay     : 100,  // debounce time on scroll event (only when lazy loading is true)
+  offscreen : 1.5,   // load items only when in the view + 0.5 by default
 });
 ```
 
@@ -123,4 +123,14 @@ It should contain a list of arrays with the path to the asset and the breakpoint
   data-ab-interchange="{"mode": "ajax", "lazy": false}"
   data-ab-interchange-src="[xxx, smallOnly], [xxx, mediumOnly]">
 </div>
+```
+
+
+### JS event
+'replaced.ab-interchange' event is automatically triggered when an img (or else) changed:
+
+```
+window.addEventListener('replaced.ab-interchange', function(e){
+  console.log(e.detail.element);
+});
 ```

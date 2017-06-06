@@ -20,7 +20,7 @@
     this.currentPath = '';
     this.mode        = this._defineMode();
 
-    this.preInit();
+    this.init();
   };
 
   Plugin.defaults = {
@@ -31,15 +31,11 @@
   };
 
   Plugin.prototype = {
-    preInit: function() {
+    init: function() {
       // no need for a plugin in case of 'picture' with good support
       if (this.el.parentNode.matches('picture') && window.HTMLPictureElement)
         return this;
 
-      this.init();
-    },
-
-    init: function() {
       this._events()
           ._generateRules()
           ._updatePath();
@@ -57,7 +53,7 @@
 
     _generateRules: function() {
       var rulesList = [],
-          rules = this.el.getAttribute(attrSrc).match(/\[[^\]]+\]/g);
+          rules     = this.el.getAttribute(attrSrc).match(/\[[^\]]+\]/g);
 
       for (var i = 0, len = rules.length; i < len; i++) {
         var rule  = rules[i].slice(1, -1).split(', '),
@@ -76,21 +72,18 @@
     },
 
     _updatePath: function() {
-      var match        = false,
-          path         = '',
-          rules        = this.rules,
-          //currentQuery = AB.mediaQuery.current,
-          rule;
+      var path  = '',
+          rules = this.rules;
 
       // Iterate through each rule
       for (var i = 0, len = rules.length; i < len; i++) {
-        rule = rules[i];
-
-        if (AB.mediaQuery.is(rule.query)) {
-          path  = rule.path;
-          match = true;
-        }
+        if (AB.mediaQuery.is(rules[i].query))
+          path = rules[i].path;
       }
+
+      // if path hasn't changed, return
+      if (this.currentPath === path)
+        return this;
 
       this.currentPath = path;
       this._replace();
@@ -99,24 +92,29 @@
     },
 
     _onScroll: function() {
-      if (this._inView()) this._replace();
+      if (this._inView())
+        this._replace();
 
       return this;
     },
 
     _events: function() {
-      var that = this,
-          scrollTimer;
+      var that      = this,
+          throttled = false;
 
-      // updata path then replace
+      // update path, then replace
       window.addEventListener('changed.ab-mediaquery', that._updatePath.bind(that));
 
       if (that.settings.lazy) {
         window.addEventListener('scroll', function() {
-          clearTimeout(scrollTimer);
-          scrollTimer = setTimeout(function() {
+          if (!throttled) {
             that._onScroll.call(that);
-          }, that.settings.delay);
+
+            throttled = true;
+            setTimeout(function() {
+              throttled = false;
+            }, that.settings.delay);
+          }
         });
       }
 
@@ -124,32 +122,48 @@
     },
 
     _inView: function() {
-      var scrollTop    = window.scrollY,
-          windowHeight = window.innerHeight;
+      var windowHeight = window.innerHeight,
+          rect         = this.el.getBoundingClientRect();
 
-      return this.el.getBoundingClientRect().top + scrollTop  <= scrollTop + windowHeight * this.settings.offscreen;
+      return (
+        rect.top >= - windowHeight * this.settings.offscreen &&
+        rect.bottom <= windowHeight + windowHeight * this.settings.offscreen
+      );
+    },
+
+    _triggerEvent: function() {
+      var event = new CustomEvent('replaced.ab-interchange', {
+        detail: {
+          element: this.el
+        }
+      });
+      window.dispatchEvent(event);
+
+      return this;
     },
 
     _replace: function() {
       var that      = this,
-          path      = that.currentPath,
-          eventName = 'replaced.ab-interchange';
-
-      that.mode = that._defineMode();
+          path      = that.currentPath;
 
       if ( !that.settings.lazy || (that.settings.lazy && that._inView()) ) {
         // images
         if (that.mode === 'img') {
+          if (that.el.src === path)
+            return that;
+
           that.el.src = path;
 
-          var event = new CustomEvent(eventName);
-          window.dispatchEvent(event);
+          that._triggerEvent();
 
           return that;
         }
 
         // background images
         if (that.mode === 'background') {
+          if (that.el.style.backgroundImage === 'url("'+path+'")')
+            return that;
+
           if (path)
             path = 'url('+path+')';
           else
@@ -157,46 +171,45 @@
 
           that.el.style.backgroundImage = path;
 
-          var event = new CustomEvent(eventName);
-          window.dispatchEvent(event);
+          that._triggerEvent();
 
           return that;
         }
 
         // HTML
-        var request = new XMLHttpRequest();
-        if (!path) {
-          that.el.innerHTML = '';
+        if (that.mode === 'ajax') {
+          if (!path) {
+            that.el.innerHTML = '';
+            return that;
+          }
+
+          var request = new XMLHttpRequest();
+          request.open('GET', path, true);
+          request.onload = function() {
+            if (this.status >= 200 && this.status < 400) {
+              that.el.innerHTML = this.response;
+
+              that._triggerEvent();
+            } else {
+              that.el.innerHTML = '';
+            }
+          };
+
+          request.onerror = function() {
+            that.el.innerHTML = '';
+          };
+
+          request.send();
+
           return that;
         }
-
-        request.open('GET', path, true);
-
-        request.onload = function() {
-          if (this.status >= 200 && this.status < 400) {
-            var resp = this.response;
-
-            that.el.innerHTML = resp;
-
-            var event = new CustomEvent(eventName);
-            window.dispatchEvent(event);
-          } else {
-            that.el.innerHTML = '';
-          }
-        };
-
-        request.onerror = function() {
-          that.el.innerHTML = '';
-        };
-
-        request.send();
 
         return that;
       }
     }
   };
 
-  AB[pluginName] = function(options) {
+  var abInterchange = function(options) {
     var elements = document.querySelectorAll('['+ attr +']');
     for (var i = 0, len = elements.length; i < len; i++) {
       if (elements[i][pluginName]) continue;
@@ -204,5 +217,5 @@
     }
   };
 
-  return AB.interchange;
+  return abInterchange;
 }));
