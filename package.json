@@ -29,7 +29,7 @@
   "author": "Thierry Philippe (@lordfpx)",
   "license": "ISC",
   "dependencies": {
-    "ab-mediaquery": "^2.1.5",
-    "another-brick": "^1.0.1"
+    "ab-mediaquery": "^2.4.0",
+    "another-brick": "^1.0.3"
   }
 }

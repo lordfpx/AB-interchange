@@ -41,7 +41,7 @@ import abInterchange from 'ab-interchange';
 
 ## Compatibility
 
-Because of the usage of `matchMedia`, compatibility start from IE 10. To rise compatibility up to IE 9, you must add this [polyfill](https://github.com/paulirish/matchMedia.js/).
+Because of the usage of `matchMedia` and `requestAnimationFrame`, compatibility start with IE 10. To rise compatibility up to IE 9, you can add [matchMedia polyfill](https://github.com/paulirish/matchMedia.js/) and [requestAnimationFrame polyfill](https://gist.github.com/paulirish/1579671).
 
 ---
 
@@ -67,7 +67,6 @@ Then you only need to initialize with `AB.interchange()` or with options:
 abInterchange({
   mode      : 'img"
   lazy      : true, // or false
-  delay     : 100,  // debounce time on scroll event (only when lazy loading is true)
   offscreen : 1.5,   // load items only when in the view + 0.5 by default
 });
 ```
@@ -110,7 +109,7 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 
 ```
 <div
-  data-ab-interchange='{"mode": "background", "lazy": true, "delay": 100, "offscreen": 1.5}"
+  data-ab-interchange='{"mode": "background", "lazy": true, "offscreen": 1.5}"
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
 </div>
 ```
@@ -127,7 +126,7 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 
 
 ### JS event
-'replaced.ab-interchange' event is automatically triggered when an img (or else) changed:
+'replaced.ab-interchange' event is automatically triggered when an IMG (or else) changed. **For IMG and HTML, it's fired only when the new content is loaded**, for background-image, immediatly, because it does not impact the layout:
 
 ```
 window.addEventListener('replaced.ab-interchange', function(e){

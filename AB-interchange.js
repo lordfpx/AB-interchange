@@ -14,11 +14,12 @@
     this.el = el;
 
     var dataOptions  = AB.isJson(this.el.getAttribute(attr)) ? JSON.parse(this.el.getAttribute(attr)) : {};
-    this.settings    = AB.extend(Plugin.defaults, options, dataOptions);
+    this.settings    = AB.extend(true, Plugin.defaults, options, dataOptions);
 
     this.rules       = [];
     this.currentPath = '';
     this.mode        = this._defineMode();
+    this.animated    = false;
 
     this.init();
   };
@@ -26,7 +27,6 @@
   Plugin.defaults = {
     mode      : 'background',
     lazy      : true,
-    delay     : 100,
     offscreen : 1.5
   };
 
@@ -92,6 +92,8 @@
     },
 
     _onScroll: function() {
+      this.animated = false;
+
       if (this._inView())
         this._replace();
 
@@ -99,24 +101,22 @@
     },
 
     _events: function() {
-      var that      = this,
-          throttled = false;
+      var that = this;
 
       // update path, then replace
       window.addEventListener('changed.ab-mediaquery', that._updatePath.bind(that));
 
       if (that.settings.lazy) {
         window.addEventListener('scroll', function() {
-          if (!throttled) {
-            that._onScroll.call(that);
-
-            throttled = true;
-            setTimeout(function() {
-              throttled = false;
-            }, that.settings.delay);
+          if (!that.animated) {
+            window.requestAnimationFrame(that._onScroll.bind(that));
+            that.animated = true;
           }
         });
       }
+
+      // on img change
+      that.el.addEventListener('load', that._triggerEvent.bind(that));
 
       return that;
     },
@@ -143,23 +143,20 @@
     },
 
     _replace: function() {
-      var that      = this,
-          path      = that.currentPath;
+      var that = this,
+          path = that.currentPath;
 
       if ( !that.settings.lazy || (that.settings.lazy && that._inView()) ) {
-        // images
+        // image case
         if (that.mode === 'img') {
           if (that.el.src === path)
             return that;
 
-          that.el.src = path;
-
-          that._triggerEvent();
-
+          that.el.src = path; // event triggered when img is loaded
           return that;
         }
 
-        // background images
+        // background-image case
         if (that.mode === 'background') {
           if (that.el.style.backgroundImage === 'url("'+path+'")')
             return that;
@@ -170,13 +167,12 @@
             path = 'none';
 
           that.el.style.backgroundImage = path;
-
           that._triggerEvent();
 
           return that;
         }
 
-        // HTML
+        // HTML case
         if (that.mode === 'ajax') {
           if (!path) {
             that.el.innerHTML = '';
@@ -188,7 +184,6 @@
           request.onload = function() {
             if (this.status >= 200 && this.status < 400) {
               that.el.innerHTML = this.response;
-
               that._triggerEvent();
             } else {
               that.el.innerHTML = '';
@@ -198,7 +193,6 @@
           request.onerror = function() {
             that.el.innerHTML = '';
           };
-
           request.send();
 
           return that;
@@ -216,6 +210,8 @@
       elements[i][pluginName] = new Plugin(elements[i], options);
     }
   };
+
+  AB.plugins.abInterchange = abInterchange;
 
   return abInterchange;
 }));
