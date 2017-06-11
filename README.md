@@ -6,6 +6,8 @@ AB-interchange is a pure JavaScript file that makes possible to conditionnaly lo
 - **background-image**
 - **HTML content** (Ajax)
 
+It's damn small: **less than 1800 bytes** (uglyfied and GZipped, including AB.js and ab-mediaQuery).
+
 That plugin also has an **lazy-loading** option!
 
 - [codepen](https://codepen.io/lordfpx/pen/jApqLW)
