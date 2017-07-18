@@ -80,8 +80,8 @@
   window.CustomEvent = CustomEvent;
 })();
 
-// main AB object
-var AB = {
+// main public AB object
+window.AB = {
   // deep extend function
   extend: function() {
     var extended = {},
@@ -98,7 +98,7 @@ var AB = {
       for (var prop in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, prop)) {
           if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]') {
-            extended[prop] = AB.extend(true, extended[prop], obj[prop]);
+            extended[prop] = window.AB.extend(true, extended[prop], obj[prop]);
           } else {
             extended[prop] = obj[prop];
           }
@@ -123,11 +123,8 @@ var AB = {
     return true;
   },
 
-  // where all AB plugins are stored
   plugins: {}
 };
-
-module.exports = AB;
 
 /***/ }),
 /* 1 */
@@ -146,8 +143,8 @@ var pluginName = 'interchange',
 var Plugin = function(el, options) {
   this.el = el;
 
-  var dataOptions  = AB.isJson(this.el.getAttribute(attr)) ? JSON.parse(this.el.getAttribute(attr)) : {};
-  this.settings    = AB.extend(true, Plugin.defaults, options, dataOptions);
+  var dataOptions  = window.AB.isJson(this.el.getAttribute(attr)) ? JSON.parse(this.el.getAttribute(attr)) : {};
+  this.settings    = window.AB.extend(true, Plugin.defaults, options, dataOptions);
 
   this.rules       = [];
   this.currentPath = '';
@@ -210,7 +207,7 @@ Plugin.prototype = {
 
     // Iterate through each rule
     for (var i = 0, len = rules.length; i < len; i++) {
-      if (AB.mediaQuery.is(rules[i].query))
+      if (window.AB.mediaQuery.is(rules[i].query))
         path = rules[i].path;
     }
 
@@ -336,15 +333,13 @@ Plugin.prototype = {
   }
 };
 
-var abInterchange = function(options) {
+window.abInterchange = function(options) {
   var elements = document.querySelectorAll('['+ attr +']');
   for (var i = 0, len = elements.length; i < len; i++) {
     if (elements[i][pluginName]) continue;
     elements[i][pluginName] = new Plugin(elements[i], options);
   }
 };
-
-module.exports = abInterchange;
 
 /***/ }),
 /* 2 */
@@ -356,7 +351,7 @@ module.exports = abInterchange;
 var AB = __webpack_require__(0);
 
 var Plugin = function(opt) {
-  this.settings = AB.extend(true, Plugin.defaults, opt);
+  this.settings = window.AB.extend(true, Plugin.defaults, opt);
   this.queries  = this.settings.bp;
   this.current  = [];
   this.animated = false;
@@ -421,11 +416,9 @@ Plugin.prototype = {
   }
 };
 
-var abMediaQuery = function(opt) {
-  AB.mediaQuery = new Plugin(opt);
+window.abMediaQuery = function(opt) {
+  window.AB.mediaQuery = new Plugin(opt);
 };
-
-module.exports = abMediaQuery;
 
 /***/ })
 /******/ ]);

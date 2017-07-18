@@ -10,8 +10,8 @@ var pluginName = 'interchange',
 var Plugin = function(el, options) {
   this.el = el;
 
-  var dataOptions  = AB.isJson(this.el.getAttribute(attr)) ? JSON.parse(this.el.getAttribute(attr)) : {};
-  this.settings    = AB.extend(true, Plugin.defaults, options, dataOptions);
+  var dataOptions  = window.AB.isJson(this.el.getAttribute(attr)) ? JSON.parse(this.el.getAttribute(attr)) : {};
+  this.settings    = window.AB.extend(true, Plugin.defaults, options, dataOptions);
 
   this.rules       = [];
   this.currentPath = '';
@@ -74,7 +74,7 @@ Plugin.prototype = {
 
     // Iterate through each rule
     for (var i = 0, len = rules.length; i < len; i++) {
-      if (AB.mediaQuery.is(rules[i].query))
+      if (window.AB.mediaQuery.is(rules[i].query))
         path = rules[i].path;
     }
 
@@ -200,12 +200,10 @@ Plugin.prototype = {
   }
 };
 
-var abInterchange = function(options) {
+window.abInterchange = function(options) {
   var elements = document.querySelectorAll('['+ attr +']');
   for (var i = 0, len = elements.length; i < len; i++) {
     if (elements[i][pluginName]) continue;
     elements[i][pluginName] = new Plugin(elements[i], options);
   }
 };
-
-module.exports = abInterchange;
