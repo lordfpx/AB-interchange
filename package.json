@@ -13,7 +13,7 @@
   "homepage": "https://github.com/lordfpx/AB-interchange#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack index.js dist/AB-interchange.js"
+    "build": "webpack index.js dist/AB-interchange.js && webpack index.js dist/AB-interchange.min.js --optimize-minimize"
   },
   "keywords": [
     "javascript",
