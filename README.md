@@ -30,6 +30,8 @@ It's used on French website [ENGIE](https://particuliers.engie.fr/).
 ### Classic usage
 Just load the script on your page, just before `</body>`.
 
+**No need to load [another-brick](https://github.com/lordfpx/AB) or [AB-mediaQuery](https://github.com/lordfpx/AB-mediaQuery) since they are already included into AB-interchange. You can use their features of course (read respective readme).**
+
 ### As a module
 The best solution is to use browserify or Webpack and import 'abInterchange'.
 
