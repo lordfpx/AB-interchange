@@ -68,3 +68,5 @@ $RECYCLE.BIN/
 
 node_modules
 yarn.lock
+
+.vscode/
