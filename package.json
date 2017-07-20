@@ -1,6 +1,6 @@
 {
   "name": "ab-interchange",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "AB-interchange: While responsive image loading is not really an easy task even today, here is a solution to manage conditional (based on breakpoints) loading of img, background-image or even HTML content.",
   "main": "index.js",
   "repository": {
@@ -30,8 +30,8 @@
   "author": "Thierry Philippe (@lordfpx)",
   "license": "ISC",
   "dependencies": {
-    "ab-mediaquery": "git://github.com/lordfpx/AB-mediaQuery.git#develop",
-    "another-brick": "git://github.com/lordfpx/AB.git#develop"
+    "ab-mediaquery": "^2.6.0",
+    "another-brick": "^1.2.0"
   },
   "devDependencies": {
     "webpack": "^3.3.0"
