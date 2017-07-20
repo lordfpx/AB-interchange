@@ -1,12 +1,12 @@
 # AB-interchange
 
-AB-interchange is a pure JavaScript file that makes possible to conditionnaly load:
+AB-interchange is a vanilla JavaScript that makes possible conditionnaly loading depending on media queries:
 
-- **img** (it can be also used as **picture** polyfill on unsupported browsers)
+- **img** (it can be also used as a **picture** polyfill on unsupported browsers)
 - **background-image**
 - **HTML content** (Ajax)
 
-It's damn small: **less than 1800 bytes** (uglyfied and GZipped, including AB.js and ab-mediaQuery).
+It's damn small: about **1800 bytes** (uglyfied and GZipped).
 
 That plugin also has an **lazy-loading** option!
 
@@ -21,21 +21,21 @@ or
 > yarn add ab-interchange
 ```
 
-The plugin is **CommonJS** and **AMD** compliant (UMD).
-
 It's used on French website [ENGIE](https://particuliers.engie.fr/).
 
 ---
 
-## Dependencies:
+## Setup
 
-- [AB (another-brick)](https://www.npmjs.com/package/ab-mediaquery)
-- [AB-mediaQueries v2](https://www.npmjs.com/package/ab-mediaquery)
+### Classic usage
+Just load the script on your page, just before `</body>`.
 
-You can either loads those scripts or import them (with browserify or webpack for ex.):
+**No need to load [another-brick](https://github.com/lordfpx/AB) or [AB-mediaQuery](https://github.com/lordfpx/AB-mediaQuery) since they are already included into AB-interchange. You can use their features of course (read respective readme).**
+
+### As a module
+The best solution is to use browserify or Webpack and import 'abInterchange'.
+
 ```
-import AB from 'another-brick';
-import abMediaQuery from 'ab-mediaquery';
 import abInterchange from 'ab-interchange';
 ```
 
@@ -47,33 +47,32 @@ Because of the usage of `matchMedia` and `requestAnimationFrame`, compatibility 
 
 ---
 
-## SETUP
+## Usage
 
 Follow [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaquery) readme to configure it the way you like depending on your needs. For exemple:
 
 ```
 abMediaQuery({
   bp: {
-    smallOnly: 'screen and (max-width: 767px)',
+    smallOnly:  'screen and (max-width: 767px)',
     mediumOnly: 'screen and (min-width: 768px) and (max-width: 1024px)',
-    medium: 'screen and (min-width: 768px)',
-    largeOnly: 'screen and (min-width: 1025px) and (max-width: 1280px)',
-    large: 'screen and (min-width: 1025px)'
+    medium:     'screen and (min-width: 768px)',
+    largeOnly:  'screen and (min-width: 1025px) and (max-width: 1280px)',
+    large:      'screen and (min-width: 1025px)'
   }
 });
 ```
 
-Then you only need to initialize with `AB.interchange()` or with options:
+Then you only need to initialize with `AB.interchange()` or with some options:
 
 ```
 abInterchange({
-  mode      : 'img"
   lazy      : true, // or false
-  offscreen : 1.5,   // load items only when in the view + 0.5 by default
+  offscreen : 1.5,  // load items only when in the view + 0.5 by default
 });
 ```
 
-You can also use **data-ab-interchange** attribute to pass those otpions individually.
+Then use **data-ab-interchange** attribute to pass otpions individually.
 
 **data-ab-interchange-src** attribute is where you define different sources and breakpoints defined with AB-mediaQuery.
 It should contain a list of arrays with the path to the asset and the breakpoint name. Beware to respect mobile first order. Order is **VERY** important!
