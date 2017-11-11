@@ -16,6 +16,8 @@ It's damn small: about <strong>1800 bytes</strong> (uglyfied and GZipped). It is
 Have a look at the <a href="https://codepen.io/lordfpx/pen/jApqLW" target="_blank">Codepen demonstration</a>.
 </p>
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/85a4444c8e573ae62a49/maintainability)](https://codeclimate.com/github/lordfpx/AB-interchange/maintainability)
+
 
 <h2 align="center">Install</h2>
 
