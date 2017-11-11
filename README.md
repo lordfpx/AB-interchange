@@ -1,57 +1,54 @@
-# AB-interchange
+<h1 align="center">AB-interchange</h1>
 
-AB-interchange is a vanilla JavaScript that makes possible conditionnaly loading depending on media queries:
+<p align="center">
+AB-interchange is a small, dependencie free and vanilla JavaScript component that conditionnaly load things depending on media queries and it also has a <strong>lazy-loading</strong> option:
+</P>
 
-- **img** (it can be also used as a **picture** polyfill on unsupported browsers)
+- **img** (Only when `<picture>` element is not supported)
 - **background-image**
 - **HTML content** (Ajax)
 
-It's damn small: about **1800 bytes** (uglyfied and GZipped).
+<p align="center">
+It's damn small: about <strong>1800 bytes</strong> (uglyfied and GZipped). It is used in the French website of <a href="https://particuliers.engie.fr" target="_blank">ENGIE</a>.
+</p>
 
-That plugin also has an **lazy-loading** option!
+<p align="center">
+Have a look at the <a href="https://codepen.io/lordfpx/pen/jApqLW" target="_blank">Codepen demonstration</a>.
+</p>
 
-- [codepen](https://codepen.io/lordfpx/pen/jApqLW)
-- [NPM](https://www.npmjs.com/package/ab-interchange)
 
+<h2 align="center">Install</h2>
+
+Install with npm:
 ```
-> npm install ab-interchange
+npm install --save ab-interchange
+````
+
+Install with yarn:
 ```
-or
-```
-> yarn add ab-interchange
+yarn add ab-interchange
 ```
 
-It's used on French website [ENGIE](https://particuliers.engie.fr/).
 
----
 
-## Setup
+<h2 align="center">Setup</h2>
 
-### Classic usage
-Just load the script on your page, just before `</body>`.
-
-**No need to load [another-brick](https://github.com/lordfpx/AB) or [AB-mediaQuery](https://github.com/lordfpx/AB-mediaQuery) since they are already included into AB-interchange. You can use their features of course (read respective readme).**
-
-### As a module
-The best solution is to use browserify or Webpack and import 'abInterchange'.
-
-```
+You can then import it in your JS bundle (webpack, ES6, browserify...):
+```js
 import abInterchange from 'ab-interchange';
 ```
 
----
-
-## Compatibility
+Or loading the js right before `</body>` if you are not using a builder.
 
 Because of the usage of `matchMedia` and `requestAnimationFrame`, compatibility start with IE 10. To rise compatibility up to IE 9, you can add [matchMedia polyfill](https://github.com/paulirish/matchMedia.js/) and [requestAnimationFrame polyfill](https://gist.github.com/paulirish/1579671).
 
----
 
-## Usage
+
+<h2 align="center">Usage</h2>
 
 Follow [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaquery) readme to configure it the way you like depending on your needs. For exemple:
 
-```
+```js
 abMediaQuery({
   bp: {
     smallOnly:  'screen and (max-width: 767px)',
@@ -65,25 +62,25 @@ abMediaQuery({
 
 Then you only need to initialize with `AB.interchange()` or with some options:
 
-```
+```js
 abInterchange({
   lazy      : true, // or false
   offscreen : 1.5,  // load items only when in the view + 0.5 by default
 });
 ```
 
-Then use **data-ab-interchange** attribute to pass otpions individually.
+Then use `data-ab-interchange` attribute to pass options.
 
-**data-ab-interchange-src** attribute is where you define different sources and breakpoints defined with AB-mediaQuery.
+`data-ab-interchange-src` attribute is where you define different sources and breakpoints defined with AB-mediaQuery.
 It should contain a list of arrays with the path to the asset and the breakpoint name. Beware to respect mobile first order. Order is **VERY** important!
 
----
 
-## Examples
+
+<h2 align="center">Examples</h2>
 
 ### **picture**
 
-```
+```html
 <picture>
   <source srcset="xxx" media="(min-width: 80em)"/>
   <source srcset="xxx" media="(min-width: 64em)"/>
@@ -91,45 +88,45 @@ It should contain a list of arrays with the path to the asset and the breakpoint
   <source srcset="xxx"/>
   <img
     alt=""
-    data-ab-interchange='{"lazy": false}"
+    data-ab-interchange='{"lazy": false}"'
     data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
 </picture>
 ```
 
 ### **img**
 
-```
+```html
 <img
   alt=""
-  data-ab-interchange='{"lazy": false}"
+  data-ab-interchange='{"lazy": false}"'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
 ```
 
 
 ### **background-image**
 
-```
+```html
 <div
-  data-ab-interchange='{"mode": "background", "lazy": true, "offscreen": 1.5}"
+  data-ab-interchange='{"mode": "background", "lazy": true, "offscreen": 1.5}"'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
 </div>
 ```
 
 
-### **and even XMLHttpRequest content (ajax)!**
+### **XMLHttpRequest content (Ajax)**
 
-```
+```html
 <div
-  data-ab-interchange="{"mode": "ajax", "lazy": false}"
+  data-ab-interchange='{"mode": "ajax", "lazy": false}'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, mediumOnly]">
 </div>
 ```
 
 
 ### JS event
-'replaced.ab-interchange' event is automatically triggered when an IMG (or else) changed. **For IMG and HTML, it's fired only when the new content is loaded**, for background-image, immediatly, because it does not impact the layout:
+`replaced.ab-interchange` event is automatically triggered when an IMG (or else) changed. **For IMG and HTML, it's fired only when the new content is loaded**, for background-image, immediatly, because it does not impact the layout:
 
-```
+```js
 window.addEventListener('replaced.ab-interchange', function(e){
   console.log(e.detail.element);
 });

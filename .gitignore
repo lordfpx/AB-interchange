@@ -65,8 +65,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-
-node_modules
-yarn.lock
+# Dependency directories
+node_modules/
 
 .vscode/
