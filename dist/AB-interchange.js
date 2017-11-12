@@ -133,8 +133,8 @@ window.AB = {
 "use strict";
 
 
-var AB = __webpack_require__(0);
-var abMediaQuery = __webpack_require__(2);
+var AB           = __webpack_require__(0),
+    abMediaQuery = __webpack_require__(2);
 
 var pluginName = 'interchange',
     attr       = 'data-ab-interchange',
@@ -268,68 +268,63 @@ Plugin.prototype = {
       }
     });
     window.dispatchEvent(event);
-
-    return this;
   },
 
   _replace: function() {
-    var that = this,
-        path = that.currentPath;
-
-    if ( !that.settings.lazy || (that.settings.lazy && that._inView()) ) {
-      // image case
-      if (that.mode === 'img') {
-        if (that.el.src === path)
-          return that;
-
-        that.el.src = path; // event triggered when img is loaded
-        return that;
+    if ( !this.settings.lazy || (this.settings.lazy && this._inView()) ) {
+      if (this.mode === 'img') {
+        this._replaceImg();
+      } else if (this.mode === 'background') {
+        this._replaceBackground();
+      } else if (this.mode === 'ajax') {
+        this._replaceAjax();
       }
-
-      // background-image case
-      if (that.mode === 'background') {
-        if (that.el.style.backgroundImage === 'url("'+path+'")')
-          return that;
-
-        if (path)
-          path = 'url('+path+')';
-        else
-          path = 'none';
-
-        that.el.style.backgroundImage = path;
-        that._triggerEvent();
-
-        return that;
-      }
-
-      // HTML case
-      if (that.mode === 'ajax') {
-        if (!path) {
-          that.el.innerHTML = '';
-          return that;
-        }
-
-        var request = new XMLHttpRequest();
-        request.open('GET', path, true);
-        request.onload = function() {
-          if (this.status >= 200 && this.status < 400) {
-            that.el.innerHTML = this.response;
-            that._triggerEvent();
-          } else {
-            that.el.innerHTML = '';
-          }
-        };
-
-        request.onerror = function() {
-          that.el.innerHTML = '';
-        };
-        request.send();
-
-        return that;
-      }
-
-      return that;
     }
+  },
+
+  _replaceImg: function() {
+    if (this.el.src === this.currentPath)
+      return this;
+
+    this.el.src = this.currentPath; // event triggered when img is loaded
+    this._triggerEvent();
+  },
+
+  _replaceBackground: function () {
+    if (this.el.style.backgroundImage === 'url("' + this.currentPath + '")')
+      return this;
+
+    if (this.currentPath)
+      this.el.style.backgroundImage = 'url(' + this.currentPath + ')';
+    else
+      this.el.style.backgroundImage = 'none';
+
+    this._triggerEvent();
+  },
+
+  _replaceAjax: function () {
+    var that = this;
+
+    if (!this.currentPath) {
+      this.el.innerHTML = '';
+      return this;
+    }
+
+    var request = new XMLHttpRequest();
+    request.open('GET', this.currentPath, true);
+    request.onload = function () {
+      if (this.status >= 200 && this.status < 400) {
+        that.el.innerHTML = this.response;
+        that._triggerEvent();
+      } else {
+        that.el.innerHTML = '';
+      }
+    };
+
+    request.onerror = function () {
+      this.el.innerHTML = '';
+    };
+    request.send();
   }
 };
 
@@ -340,6 +335,7 @@ window.abInterchange = function(options) {
     elements[i][pluginName] = new Plugin(elements[i], options);
   }
 };
+
 
 /***/ }),
 /* 2 */
