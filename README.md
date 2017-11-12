@@ -1,39 +1,33 @@
-<h1 align="center">AB-interchange</h1>
+# AB-interchange
 
-<p align="center">
-AB-interchange is a small, dependencie free and vanilla JavaScript component that conditionnaly load things depending on media queries and it also has a <strong>lazy-loading</strong> option:
-</P>
+AB-interchange is a small, dependencie free and vanilla JavaScript component that conditionnaly load things depending on media queries and it also has a **lazy-loading** option:
 
-- **img** (Only when `<picture>` element is not supported)
+- **img**
+- **picture**
 - **background-image**
 - **HTML content** (Ajax)
 
-<p align="center">
-It's damn small: about <strong>1800 bytes</strong> (uglyfied and GZipped). It is used in the French website of <a href="https://particuliers.engie.fr" target="_blank">ENGIE</a>.
-</p>
+It's damn small: about **1800 bytes** (uglyfied and GZipped). It is used in the French website of [ENGIE](https://particuliers.engie.fr).
 
-<p align="center">
-Have a look at the <a href="https://codepen.io/lordfpx/pen/jApqLW" target="_blank">Codepen demonstration</a>.
-</p>
+Have a look at the [Codepen demonstration](https://codepen.io/lordfpx/pen/jApqLW).
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/85a4444c8e573ae62a49/maintainability)](https://codeclimate.com/github/lordfpx/AB-interchange/maintainability)
 
 
-<h2 align="center">Install</h2>
+## Install
 
 Install with npm:
-```
+```bash
 npm install --save ab-interchange
 ````
 
 Install with yarn:
-```
+```bash
 yarn add ab-interchange
 ```
 
 
-
-<h2 align="center">Setup</h2>
+## Setup
 
 You can then import it in your JS bundle (webpack, ES6, browserify...):
 ```js
@@ -46,7 +40,7 @@ Because of the usage of `matchMedia` and `requestAnimationFrame`, compatibility 
 
 
 
-<h2 align="center">Usage</h2>
+## Usage
 
 Follow [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaquery) readme to configure it the way you like depending on your needs. For exemple:
 
@@ -78,7 +72,16 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 
 
 
-<h2 align="center">Examples</h2>
+## Examples
+
+### **img**
+
+```html
+<img
+  alt=""
+  data-ab-interchange='{"lazy": false}"'
+  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
+```
 
 ### **picture**
 
@@ -93,15 +96,6 @@ It should contain a list of arrays with the path to the asset and the breakpoint
     data-ab-interchange='{"lazy": false}"'
     data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
 </picture>
-```
-
-### **img**
-
-```html
-<img
-  alt=""
-  data-ab-interchange='{"lazy": false}"'
-  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
 ```
 
 
@@ -125,7 +119,7 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 ```
 
 
-### JS event
+## JS event
 `replaced.ab-interchange` event is automatically triggered when an IMG (or else) changed. **For IMG and HTML, it's fired only when the new content is loaded**, for background-image, immediatly, because it does not impact the layout:
 
 ```js
