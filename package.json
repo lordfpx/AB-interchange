@@ -1,6 +1,6 @@
 {
   "name": "ab-interchange",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "AB-interchange: While responsive image loading is not really an easy task even today, here is a solution to manage conditional (based on breakpoints) loading of img, background-image or even HTML content.",
   "main": "index.js",
   "repository": {
@@ -19,7 +19,6 @@
     "javascript",
     "mediaquery",
     "breakpoint",
-    "jQuery",
     "ajax",
     "img",
     "responsive",
@@ -30,7 +29,7 @@
   "author": "Thierry Philippe (@lordfpx)",
   "license": "ISC",
   "dependencies": {
-    "ab-mediaquery": "^2.6.0",
+    "ab-mediaquery": "^2.6.1",
     "another-brick": "^1.2.0"
   },
   "devDependencies": {
