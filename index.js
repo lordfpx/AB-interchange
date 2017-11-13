@@ -36,8 +36,6 @@ Plugin.prototype = {
     this._events()
         ._generateRules()
         ._updatePath();
-
-    return this;
   },
 
   _defineMode: function() {
@@ -138,14 +136,16 @@ Plugin.prototype = {
   },
 
   _replace: function() {
-    if ( !this.settings.lazy || (this.settings.lazy && this._inView()) ) {
-      if (this.mode === 'img') {
-        this._replaceImg();
-      } else if (this.mode === 'background') {
-        this._replaceBackground();
-      } else if (this.mode === 'ajax') {
-        this._replaceAjax();
-      }
+    // if lazy load and not into view: stop
+    if (this.settings.lazy && !this._inView())
+      return this;
+
+    if (this.mode === 'img') {
+      this._replaceImg();
+    } else if (this.mode === 'background') {
+      this._replaceBackground();
+    } else if (this.mode === 'ajax') {
+      this._replaceAjax();
     }
   },
 
@@ -157,7 +157,7 @@ Plugin.prototype = {
     this._triggerEvent();
   },
 
-  _replaceBackground: function () {
+  _replaceBackground: function() {
     if (this.el.style.backgroundImage === 'url("' + this.currentPath + '")')
       return this;
 

@@ -19,7 +19,6 @@
     "javascript",
     "mediaquery",
     "breakpoint",
-    "jQuery",
     "ajax",
     "img",
     "responsive",
@@ -30,7 +29,7 @@
   "author": "Thierry Philippe (@lordfpx)",
   "license": "ISC",
   "dependencies": {
-    "ab-mediaquery": "^2.6.0",
+    "ab-mediaquery": "^2.6.1",
     "another-brick": "^1.2.0"
   },
   "devDependencies": {

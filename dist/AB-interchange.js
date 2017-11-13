@@ -169,8 +169,6 @@ Plugin.prototype = {
     this._events()
         ._generateRules()
         ._updatePath();
-
-    return this;
   },
 
   _defineMode: function() {
@@ -271,14 +269,16 @@ Plugin.prototype = {
   },
 
   _replace: function() {
-    if ( !this.settings.lazy || (this.settings.lazy && this._inView()) ) {
-      if (this.mode === 'img') {
-        this._replaceImg();
-      } else if (this.mode === 'background') {
-        this._replaceBackground();
-      } else if (this.mode === 'ajax') {
-        this._replaceAjax();
-      }
+    // if lazy load and not into view: stop
+    if (this.settings.lazy && !this._inView())
+      return this;
+
+    if (this.mode === 'img') {
+      this._replaceImg();
+    } else if (this.mode === 'background') {
+      this._replaceBackground();
+    } else if (this.mode === 'ajax') {
+      this._replaceAjax();
     }
   },
 
@@ -290,7 +290,7 @@ Plugin.prototype = {
     this._triggerEvent();
   },
 
-  _replaceBackground: function () {
+  _replaceBackground: function() {
     if (this.el.style.backgroundImage === 'url("' + this.currentPath + '")')
       return this;
 
@@ -352,7 +352,7 @@ var Plugin = function(opt) {
   this.current  = [];
   this.animated = false;
 
-  this.init();
+  this._init();
 };
 
 Plugin.defaults = {
@@ -360,7 +360,7 @@ Plugin.defaults = {
 };
 
 Plugin.prototype = {
-  init: function() {
+  _init: function() {
     this.current = this._getCurrent();
     this._watcher();
 
@@ -382,16 +382,14 @@ Plugin.prototype = {
   },
 
   _watcher: function() {
-    var that  = this,
-        event = new CustomEvent('changed.ab-mediaquery'),
-        newSize, resizeTimer;
+    var that  = this;
 
-    window.onresize = function() {
+    window.addEventListener('resize', function() {
       if (!that.animated) {
         window.requestAnimationFrame(that._updateSizes.bind(that));
         that.animated = true;
       }
-    };
+    });
   },
 
   _updateSizes: function() {
@@ -415,6 +413,7 @@ Plugin.prototype = {
 window.abMediaQuery = function(opt) {
   window.AB.mediaQuery = new Plugin(opt);
 };
+
 
 /***/ })
 /******/ ]);
