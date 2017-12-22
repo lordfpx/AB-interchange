@@ -26,7 +26,7 @@ Plugin.defaults = {
   mode      : 'background',
   lazy      : false,
   offscreen : 0.5,
-  delayed   : 1000
+  delayed   : false
 };
 
 Plugin.prototype = {
