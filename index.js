@@ -17,14 +17,16 @@ var Plugin = function(el, options) {
   this.currentPath   = '';
   this.settings.mode = this._defineMode();
   this.animated      = false;
+  this.lazyTimer;
 
   this.init();
 };
 
 Plugin.defaults = {
   mode      : 'background',
-  lazy      : true,
-  offscreen : 1.5
+  lazy      : false,
+  offscreen : 0.5,
+  delayed   : 1000
 };
 
 Plugin.prototype = {
@@ -36,6 +38,10 @@ Plugin.prototype = {
     this._events()
         ._generateRules()
         ._updatePath();
+
+    if (this.settings.lazy && this.settings.delayed) {
+      this.lazyTimer = setTimeout(this._replace.bind(this), this.settings.delayed);
+    }
   },
 
   _defineMode: function() {
@@ -88,10 +94,9 @@ Plugin.prototype = {
 
   _onScroll: function() {
     if (this._inView())
-    this._replace();
+      this._replace();
 
     this.animated = false;
-
     return this;
   },
 
@@ -108,9 +113,8 @@ Plugin.prototype = {
     // update path, then replace
     window.addEventListener('changed.ab-mediaquery', that._updatePath.bind(that));
 
-    if (that.settings.lazy) {
+    if (that.settings.lazy)
       window.addEventListener('scroll', that._requestAnimationFrame.bind(that));
-    }
 
     // on img change
     that.el.addEventListener('load', that._triggerEvent.bind(that));
