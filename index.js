@@ -30,7 +30,7 @@ Plugin.defaults = {
 Plugin.prototype = {
   init: function() {
     // no need for a plugin in case of 'picture' with good support
-    if (this.el.parentNode.matches('picture') && window.HTMLPictureElement)
+    if (this.el.parentNode.matches('picture') && window.HTMLPictureElement && !this.settings.lazy)
       return this;
 
     this._events()
