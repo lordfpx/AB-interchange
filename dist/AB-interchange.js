@@ -146,10 +146,10 @@ var Plugin = function(el, options) {
   var dataOptions  = window.AB.isJson(this.el.getAttribute(attr)) ? JSON.parse(this.el.getAttribute(attr)) : {};
   this.settings    = window.AB.extend(true, Plugin.defaults, options, dataOptions);
 
-  this.rules       = [];
-  this.currentPath = '';
-  this.mode        = this._defineMode();
-  this.animated    = false;
+  this.rules         = [];
+  this.currentPath   = '';
+  this.settings.mode = this._defineMode();
+  this.animated      = false;
 
   this.init();
 };
@@ -273,11 +273,11 @@ Plugin.prototype = {
     if (this.settings.lazy && !this._inView())
       return this;
 
-    if (this.mode === 'img') {
+    if (this.settings.mode === 'img') {
       this._replaceImg();
-    } else if (this.mode === 'background') {
+    } else if (this.settings.mode === 'background') {
       this._replaceBackground();
-    } else if (this.mode === 'ajax') {
+    } else if (this.settings.mode === 'ajax') {
       this._replaceAjax();
     }
   },
