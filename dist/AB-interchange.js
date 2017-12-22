@@ -162,7 +162,7 @@ Plugin.defaults = {
 
 Plugin.prototype = {
   init: function() {
-    // no need for a plugin in case of 'picture' with good support
+    // no need for a plugin in case of 'picture' except when lazy is true
     if (this.el.parentNode.matches('picture') && window.HTMLPictureElement && !this.settings.lazy)
       return this;
 
@@ -228,6 +228,13 @@ Plugin.prototype = {
     return this;
   },
 
+  _requestAnimation: function() {
+    if (!this.animated) {
+      window.requestAnimationFrame(this._onScroll.bind(this));
+      this.animated = true;
+    }
+  },
+
   _events: function() {
     var that = this;
 
@@ -235,12 +242,7 @@ Plugin.prototype = {
     window.addEventListener('changed.ab-mediaquery', that._updatePath.bind(that));
 
     if (that.settings.lazy) {
-      window.addEventListener('scroll', function() {
-        if (!that.animated) {
-          window.requestAnimationFrame(that._onScroll.bind(that));
-          that.animated = true;
-        }
-      });
+      window.addEventListener('scroll', that._requestAnimation.bind(that));
     }
 
     // on img change
