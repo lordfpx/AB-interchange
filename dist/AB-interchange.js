@@ -220,19 +220,19 @@ Plugin.prototype = {
   },
 
   _onScroll: function() {
-    this.animated = false;
-
     if (this._inView())
-      this._replace();
+    this._replace();
+
+    this.animated = false;
 
     return this;
   },
 
-  _requestAnimation: function() {
+  _requestAnimationFrame: function() {
     if (!this.animated) {
       window.requestAnimationFrame(this._onScroll.bind(this));
-      this.animated = true;
     }
+    this.animated = true;
   },
 
   _events: function() {
@@ -242,7 +242,7 @@ Plugin.prototype = {
     window.addEventListener('changed.ab-mediaquery', that._updatePath.bind(that));
 
     if (that.settings.lazy) {
-      window.addEventListener('scroll', that._requestAnimation.bind(that));
+      window.addEventListener('scroll', that._requestAnimationFrame.bind(that));
     }
 
     // on img change
