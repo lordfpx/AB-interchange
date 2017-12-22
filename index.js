@@ -7,11 +7,11 @@ var pluginName = 'interchange',
     attr       = 'data-ab-interchange',
     attrSrc    = 'data-ab-interchange-src';
 
-var Plugin = function(el, options) {
+var Plugin = function (el, options) {
   this.el = el;
 
-  var dataOptions  = window.AB.isJson(this.el.getAttribute(attr)) ? JSON.parse(this.el.getAttribute(attr)) : {};
-  this.settings    = window.AB.extend(true, Plugin.defaults, options, dataOptions);
+  var dataOptions = window.AB.isJson(this.el.getAttribute(attr)) ? JSON.parse(this.el.getAttribute(attr)) : {};
+  this.settings = window.AB.extend(true, Plugin.defaults, options, dataOptions);
 
   this.rules         = [];
   this.currentPath   = '';
@@ -23,28 +23,33 @@ var Plugin = function(el, options) {
 };
 
 Plugin.defaults = {
-  mode      : 'background',
-  lazy      : false,
-  offscreen : 0.5,
-  delayed   : false
+  mode:      'background',
+  lazy:      false,
+  offscreen: 0.5,
+  delayed:   false
 };
 
 Plugin.prototype = {
-  init: function() {
+  init: function () {
+    var that = this;
+
     // no need for a plugin in case of 'picture' except when lazy is true
     if (this.el.parentNode.matches('picture') && window.HTMLPictureElement && !this.settings.lazy)
       return this;
 
+    if (this.settings.lazy && this.settings.delayed) {
+      this.lazyTimer = setTimeout(function () {
+        that.settings.lazy = false;
+        that._replace();
+      }, this.settings.delayed);
+    }
+
     this._events()
         ._generateRules()
         ._updatePath();
-
-    if (this.settings.lazy && this.settings.delayed) {
-      this.lazyTimer = setTimeout(this._replace.bind(this), this.settings.delayed);
-    }
   },
 
-  _defineMode: function() {
+  _defineMode: function () {
     // in case of <img /> there is no doubt
     if (this.el.nodeName === 'IMG')
       return 'img';
@@ -52,7 +57,7 @@ Plugin.prototype = {
     return this.settings.mode;
   },
 
-  _generateRules: function() {
+  _generateRules: function () {
     var rulesList = [],
         rules     = this.el.getAttribute(attrSrc).match(/\[[^\]]+\]/g);
 
@@ -62,7 +67,7 @@ Plugin.prototype = {
           query = rule[rule.length - 1];
 
       rulesList.push({
-        path: path,
+        path:  path,
         query: query
       });
     }
@@ -72,7 +77,7 @@ Plugin.prototype = {
     return this;
   },
 
-  _updatePath: function() {
+  _updatePath: function () {
     var path  = '',
         rules = this.rules;
 
@@ -92,22 +97,24 @@ Plugin.prototype = {
     return this;
   },
 
-  _onScroll: function() {
-    if (this._inView())
+  _onScroll: function () {
+    if (this._inView()) {
+      clearTimeout(this.lazyTimer);
       this._replace();
+    }
 
     this.animated = false;
     return this;
   },
 
-  _requestAnimationFrame: function() {
-    if (!this.animated) {
+  _requestAnimationFrame: function () {
+    if (!this.animated)
       window.requestAnimationFrame(this._onScroll.bind(this));
-    }
+
     this.animated = true;
   },
 
-  _events: function() {
+  _events: function () {
     var that = this;
 
     // update path, then replace
@@ -122,7 +129,7 @@ Plugin.prototype = {
     return that;
   },
 
-  _inView: function() {
+  _inView: function () {
     var windowHeight = window.innerHeight,
         rect         = this.el.getBoundingClientRect();
 
@@ -132,7 +139,7 @@ Plugin.prototype = {
     );
   },
 
-  _triggerEvent: function() {
+  _triggerEvent: function () {
     var event = new CustomEvent('replaced.ab-interchange', {
       detail: {
         element: this.el
@@ -141,7 +148,7 @@ Plugin.prototype = {
     window.dispatchEvent(event);
   },
 
-  _replace: function() {
+  _replace: function () {
     // if lazy load and not into view: stop
     if (this.settings.lazy && !this._inView())
       return this;
@@ -155,7 +162,7 @@ Plugin.prototype = {
     }
   },
 
-  _replaceImg: function() {
+  _replaceImg: function () {
     if (this.el.src === this.currentPath)
       return this;
 
@@ -163,7 +170,7 @@ Plugin.prototype = {
     this._triggerEvent();
   },
 
-  _replaceBackground: function() {
+  _replaceBackground: function () {
     if (this.el.style.backgroundImage === 'url("' + this.currentPath + '")')
       return this;
 
@@ -185,6 +192,7 @@ Plugin.prototype = {
 
     var request = new XMLHttpRequest();
     request.open('GET', this.currentPath, true);
+
     request.onload = function () {
       if (this.status >= 200 && this.status < 400) {
         that.el.innerHTML = this.response;
@@ -197,12 +205,13 @@ Plugin.prototype = {
     request.onerror = function () {
       this.el.innerHTML = '';
     };
+
     request.send();
   }
 };
 
-window.abInterchange = function(options) {
-  var elements = document.querySelectorAll('['+ attr +']');
+window.abInterchange = function (options) {
+  var elements = document.querySelectorAll('[' + attr + ']');
   for (var i = 0, len = elements.length; i < len; i++) {
     if (elements[i][pluginName]) continue;
     elements[i][pluginName] = new Plugin(elements[i], options);
