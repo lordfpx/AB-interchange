@@ -213,8 +213,13 @@ Plugin.prototype = {
     this.el.style.width     = 0;
     this.el.style.height    = 0;
 
-    this.el.parentNode.insertBefore(placeholderNode, this.el);
-    placeholderNode.appendChild(this.el);
+    if (this.el.parentNode.matches('picture')) {
+      this.el.parentNode.parentNode.insertBefore(placeholderNode, this.el.parentNode);
+      placeholderNode.appendChild(this.el.parentNode);
+    } else {
+      this.el.parentNode.insertBefore(placeholderNode, this.el);
+      placeholderNode.appendChild(this.el);
+    }
   },
 
   _defineMode: function() {
