@@ -156,14 +156,15 @@ var Plugin = function (el, options) {
 };
 
 Plugin.defaults = {
-  mode:      'background',
-  lazy:      false,
-  offscreen: 0.5,
-  delayed:   false
+  mode:        'background',
+  lazy:        false,
+  offscreen:   0.5,
+  delayed:     false,
+  placeholder: true
 };
 
 Plugin.prototype = {
-  init: function () {
+  init: function() {
     var that = this;
 
     // no need for a plugin in case of 'picture' except when lazy is true
@@ -171,10 +172,14 @@ Plugin.prototype = {
       return this;
 
     if (this.settings.lazy && this.settings.delayed) {
-      this.lazyTimer = setTimeout(function () {
+      this.lazyTimer = setTimeout(function() {
         that.settings.lazy = false;
         that._replace();
       }, this.settings.delayed);
+    }
+
+    if (this.settings.placeholder) {
+      this._setPlaceholder();
     }
 
     this._events()
@@ -182,7 +187,37 @@ Plugin.prototype = {
         ._updatePath();
   },
 
-  _defineMode: function () {
+  _setPlaceholder: function() {
+    var placeholderNode = document.createElement('div'),
+        width           = this.el.getAttribute('width'),
+        height          = this.el.getAttribute('height');
+
+    if (!width && !height)
+      return this;
+
+    placeholderNode.classList.add('ab-interchange-placeholder');
+
+    placeholderNode.style.overflow   = 'hidden';
+    placeholderNode.style.position   = 'relative';
+    placeholderNode.style.paddingTop = (height / width * 100).toFixed(2) + "%";
+
+    this.el.style.position  = 'absolute';
+    this.el.style.top       = 0;
+    this.el.style.right     = 0;
+    this.el.style.bottom    = 0;
+    this.el.style.left      = 0;
+    this.el.style.maxHeight = '100%';
+    this.el.style.minHeight = '100%';
+    this.el.style.maxWidth  = '100%';
+    this.el.style.minWidth  = '100%';
+    this.el.style.width     = 0;
+    this.el.style.height    = 0;
+
+    this.el.parentNode.insertBefore(placeholderNode, this.el);
+    placeholderNode.appendChild(this.el);
+  },
+
+  _defineMode: function() {
     // in case of <img /> there is no doubt
     if (this.el.nodeName === 'IMG')
       return 'img';
@@ -190,7 +225,7 @@ Plugin.prototype = {
     return this.settings.mode;
   },
 
-  _generateRules: function () {
+  _generateRules: function() {
     var rulesList = [],
         rules     = this.el.getAttribute(attrSrc).match(/\[[^\]]+\]/g);
 
@@ -210,7 +245,7 @@ Plugin.prototype = {
     return this;
   },
 
-  _updatePath: function () {
+  _updatePath: function() {
     var path  = '',
         rules = this.rules;
 
@@ -230,7 +265,7 @@ Plugin.prototype = {
     return this;
   },
 
-  _onScroll: function () {
+  _onScroll: function() {
     if (this._inView()) {
       clearTimeout(this.lazyTimer);
       this._replace();
@@ -240,14 +275,14 @@ Plugin.prototype = {
     return this;
   },
 
-  _requestAnimationFrame: function () {
+  _requestAnimationFrame: function() {
     if (!this.animated)
       window.requestAnimationFrame(this._onScroll.bind(this));
 
     this.animated = true;
   },
 
-  _events: function () {
+  _events: function() {
     var that = this;
 
     // update path, then replace
@@ -262,7 +297,7 @@ Plugin.prototype = {
     return that;
   },
 
-  _inView: function () {
+  _inView: function() {
     var windowHeight = window.innerHeight,
         rect         = this.el.getBoundingClientRect();
 
@@ -272,7 +307,7 @@ Plugin.prototype = {
     );
   },
 
-  _triggerEvent: function () {
+  _triggerEvent: function() {
     var event = new CustomEvent('replaced.ab-interchange', {
       detail: {
         element: this.el
@@ -281,7 +316,7 @@ Plugin.prototype = {
     window.dispatchEvent(event);
   },
 
-  _replace: function () {
+  _replace: function() {
     // if lazy load and not into view: stop
     if (this.settings.lazy && !this._inView())
       return this;
@@ -295,7 +330,7 @@ Plugin.prototype = {
     }
   },
 
-  _replaceImg: function () {
+  _replaceImg: function() {
     if (this.el.src === this.currentPath)
       return this;
 
@@ -303,19 +338,19 @@ Plugin.prototype = {
     this._triggerEvent();
   },
 
-  _replaceBackground: function () {
-    if (this.el.style.backgroundImage === 'url("' + this.currentPath + '")')
+  _replaceBackground: function() {
+    if (this.el.style.backgroundImage === 'url("'+ this.currentPath +'")')
       return this;
 
     if (this.currentPath)
-      this.el.style.backgroundImage = 'url(' + this.currentPath + ')';
+      this.el.style.backgroundImage = 'url('+ this.currentPath +')';
     else
       this.el.style.backgroundImage = 'none';
 
     this._triggerEvent();
   },
 
-  _replaceAjax: function () {
+  _replaceAjax: function() {
     var that = this;
 
     if (!this.currentPath) {
@@ -335,7 +370,7 @@ Plugin.prototype = {
       }
     };
 
-    request.onerror = function () {
+    request.onerror = function() {
       this.el.innerHTML = '';
     };
 
@@ -343,8 +378,8 @@ Plugin.prototype = {
   }
 };
 
-window.abInterchange = function (options) {
-  var elements = document.querySelectorAll('[' + attr + ']');
+window.abInterchange = function(options) {
+  var elements = document.querySelectorAll('['+ attr +']');
   for (var i = 0, len = elements.length; i < len; i++) {
     if (elements[i][pluginName]) continue;
     elements[i][pluginName] = new Plugin(elements[i], options);

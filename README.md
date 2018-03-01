@@ -61,6 +61,7 @@ Then you only need to initialize with `AB.interchange()` or with some options:
 abInterchange({
   lazy      : true, // or false
   offscreen : 1.5,  // load items only when in the view + 0.5 by default
+  placeholder: true // trick to prevent reflow of the page
 });
 ```
 
@@ -78,6 +79,8 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 ```html
 <img
   alt=""
+  width="100"
+  height="75"
   data-ab-interchange='{"lazy": false}"'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
 ```
@@ -92,6 +95,8 @@ It should contain a list of arrays with the path to the asset and the breakpoint
   <source srcset="xxx"/>
   <img
     alt=""
+    width="100"
+    height="75"
     data-ab-interchange='{"lazy": false}"'
     data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
 </picture>
