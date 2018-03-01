@@ -25,9 +25,9 @@ var Plugin = function (el, options) {
 Plugin.defaults = {
   mode:        'background',
   lazy:        false,
-  offscreen:   0.5,
+  offscreen:   1.5,
   delayed:     false,
-  placeholder: true
+  placeholder: false
 };
 
 Plugin.prototype = {

@@ -61,7 +61,7 @@ Then you only need to initialize with `AB.interchange()` or with some options:
 abInterchange({
   lazy      : true, // or false
   offscreen : 1.5,  // load items only when in the view + 0.5 by default
-  placeholder: true // trick to prevent reflow of the page
+  placeholder: false // trick to prevent reflow of the page
 });
 ```
 
