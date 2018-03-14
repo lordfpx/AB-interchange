@@ -16,7 +16,7 @@ var Plugin = function (el, options) {
   this.rules         = [];
   this.currentPath   = '';
   this.settings.mode = this._defineMode();
-  this.animated      = false;
+  this.animated      = false; // for requestAnimationFrame
   this.lazyTimer;
 
   this.init();
@@ -25,81 +25,86 @@ var Plugin = function (el, options) {
 Plugin.defaults = {
   mode:        'background',
   lazy:        false,
-  offscreen:   1.5,
-  delayed:     false,
-  placeholder: false
+  lazySettings: {
+    placeholder: false,
+    offscreen:   1.5,
+    delayed:     false
+  }
 };
 
 Plugin.prototype = {
   init: function() {
     var that = this;
 
+    this.lazySettings = this.settings.lazySettings;
+    this.isLazy       = this.settings.lazy;
+
     // no need for a plugin in case of 'picture' except when lazy is true
-    if (this.el.parentNode.matches('picture') && window.HTMLPictureElement && !this.settings.lazy)
+    if (this.el.parentNode.matches('picture') && window.HTMLPictureElement && !this.isLazy)
       return this;
 
-    if (this.settings.lazy && this.settings.delayed) {
+    // replace anyway after a delay (to ease offline)
+    if (this.isLazy && this.lazySettings.delayed) {
       this.lazyTimer = setTimeout(function() {
-        that.settings.lazy = false;
+        that.isLazy = false;
         that._replace();
-      }, this.settings.delayed);
+      }, this.lazySettings.delayed);
     }
 
-    if (this.settings.placeholder) {
-      this._setPlaceholder();
-    }
-
-    this._events()
+    this._setPlaceholder()
+        ._events()
         ._generateRules()
         ._updatePath();
   },
 
   _setPlaceholder: function() {
     var placeholderNode = document.createElement('div'),
+        imgNode         = document.createElement('img'),
+        alt             = this.el.getAttribute('alt'),
         width           = this.el.getAttribute('width'),
         height          = this.el.getAttribute('height');
 
-    if (!width && !height)
+    if (!this.lazySettings.placeholder || this.el.nodeName === 'IMG' || this.el.parentNode.matches('picture') || !width || !height)
       return this;
 
-    placeholderNode.classList.add('ab-interchange-placeholder');
+    this.el.style.overflow = 'hidden';
+    this.el.style.position = 'relative';
 
-    placeholderNode.style.overflow   = 'hidden';
-    placeholderNode.style.position   = 'relative';
+    placeholderNode.classList.add('ab-interchange-placeholder');
     placeholderNode.style.paddingTop = (height / width * 100).toFixed(2) + "%";
 
-    this.el.style.position  = 'absolute';
-    this.el.style.top       = 0;
-    this.el.style.right     = 0;
-    this.el.style.bottom    = 0;
-    this.el.style.left      = 0;
-    this.el.style.maxHeight = '100%';
-    this.el.style.minHeight = '100%';
-    this.el.style.maxWidth  = '100%';
-    this.el.style.minWidth  = '100%';
-    this.el.style.width     = 0;
-    this.el.style.height    = 0;
+    imgNode.style.position  = 'absolute';
+    imgNode.style.top       = 0;
+    imgNode.style.right     = 0;
+    imgNode.style.bottom    = 0;
+    imgNode.style.left      = 0;
+    imgNode.style.maxHeight = '100%';
+    imgNode.style.minHeight = '100%';
+    imgNode.style.maxWidth  = '100%';
+    imgNode.style.minWidth  = '100%';
+    imgNode.style.height    = 0;
 
-    if (this.el.parentNode.matches('picture')) {
-      this.el.parentNode.parentNode.insertBefore(placeholderNode, this.el.parentNode);
-      placeholderNode.appendChild(this.el.parentNode);
-    } else {
-      this.el.parentNode.insertBefore(placeholderNode, this.el);
-      placeholderNode.appendChild(this.el);
-    }
+    imgNode.alt = (alt === null) ? '' : alt;
+
+    this.el.appendChild(placeholderNode);
+    this.el.appendChild(imgNode);
+
+    return this;
   },
 
   _defineMode: function() {
     // in case of <img /> there is no doubt
-    if (this.el.nodeName === 'IMG')
+    if (this.el.nodeName === 'IMG' || this.el.parentNode.matches('picture'))
       return 'img';
 
     return this.settings.mode;
   },
 
   _generateRules: function() {
-    var rulesList = [],
-        rules     = this.el.getAttribute(attrSrc).match(/\[[^\]]+\]/g);
+    var rulesList  = [],
+        // retro compatibility: sources inside 'attr'
+        getAttrSrc = this.el.getAttribute(attrSrc) ? this.el.getAttribute(attrSrc) : this.el.getAttribute(attr),
+        rules      = getAttrSrc.match(/\[[^\]]+\]/g);
 
     for (var i = 0, len = rules.length; i < len; i++) {
       var rule  = rules[i].slice(1, -1).split(', '),
@@ -160,7 +165,7 @@ Plugin.prototype = {
     // update path, then replace
     window.addEventListener('changed.ab-mediaquery', that._updatePath.bind(that));
 
-    if (that.settings.lazy)
+    if (that.isLazy)
       window.addEventListener('scroll', that._requestAnimationFrame.bind(that));
 
     // on img change
@@ -174,8 +179,8 @@ Plugin.prototype = {
         rect         = this.el.getBoundingClientRect();
 
     return (
-      rect.top >= - windowHeight * this.settings.offscreen &&
-      rect.bottom <= windowHeight + windowHeight * this.settings.offscreen
+      rect.top    >= - windowHeight * this.lazySettings.offscreen &&
+      rect.bottom <= windowHeight + windowHeight * this.lazySettings.offscreen
     );
   },
 
@@ -190,7 +195,7 @@ Plugin.prototype = {
 
   _replace: function() {
     // if lazy load and not into view: stop
-    if (this.settings.lazy && !this._inView())
+    if (this.isLazy&& !this._inView())
       return this;
 
     if (this.settings.mode === 'img') {
@@ -203,10 +208,18 @@ Plugin.prototype = {
   },
 
   _replaceImg: function() {
-    if (this.el.src === this.currentPath)
+    var replaceNode;
+
+    if (this.lazySettings.placeholder)
+      replaceNode = this.el.querySelector('img');
+    else
+      replaceNode = this.el;
+
+    if (replaceNode === this.currentPath)
       return this;
 
-    this.el.src = this.currentPath; // event triggered when img is loaded
+    replaceNode.src = this.currentPath; // event triggered when img is loaded
+
     this._triggerEvent();
   },
 
