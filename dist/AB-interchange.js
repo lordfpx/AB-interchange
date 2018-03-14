@@ -161,7 +161,8 @@ Plugin.defaults = {
   lazySettings: {
     placeholder: false,
     offscreen:   1.5,
-    delayed:     false
+    delayed:     false,
+    layout:      'fluid'
   }
 };
 
@@ -202,6 +203,11 @@ Plugin.prototype = {
 
     this.el.style.overflow = 'hidden';
     this.el.style.position = 'relative';
+
+    if (this.lazySettings.layout === 'fixed') {
+      this.el.style.height = height;
+      this.el.style.width  = width;
+    }
 
     placeholderNode.classList.add('ab-interchange-placeholder');
     placeholderNode.style.paddingTop = (height / width * 100).toFixed(2) + "%";

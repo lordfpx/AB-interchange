@@ -64,7 +64,8 @@ abInterchange({
   lazySettings: {
     placeholder: false, // trick to prevent reflow of the page
     offscreen:   1.5,   // load items only when in the view + 0.5
-    delayed:     false
+    delayed:     false,
+    layout:      'fluid' // can be "fixed" to fixed dimensions (not fluid)
   }
 });
 ```
