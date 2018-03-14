@@ -205,8 +205,8 @@ Plugin.prototype = {
     this.el.style.position = 'relative';
 
     if (this.lazySettings.layout === 'fixed') {
-      this.el.style.height = height;
-      this.el.style.width  = width;
+      this.el.style.height = height +'px';
+      this.el.style.width  = width +'px';
     }
 
     placeholderNode.classList.add('ab-interchange-placeholder');
