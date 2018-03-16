@@ -161,7 +161,6 @@ Plugin.prototype = {
 
     this.currentPath = path;
     this._replace();
-    this.el.classList.remove('ab-interchange-loading');
 
     return this;
   },
@@ -203,6 +202,7 @@ Plugin.prototype = {
   },
 
   _triggerEvent: function() {
+    this.el.classList.remove('ab-interchange-loading');
     var event = new CustomEvent('replaced.ab-interchange', {
       detail: {
         element: this.el
