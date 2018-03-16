@@ -212,6 +212,7 @@ Plugin.prototype = {
 
     this.el.style.overflow = 'hidden';
     this.el.style.position = 'relative';
+    this.el.classList.add('ab-interchange-loading');
 
     if (this.lazySettings.layout === 'fixed') {
       this.el.style.height = height +'px';
@@ -293,6 +294,7 @@ Plugin.prototype = {
 
     this.currentPath = path;
     this._replace();
+    this.el.classList.remove('ab-interchange-loading');
 
     return this;
   },
