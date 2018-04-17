@@ -199,16 +199,45 @@ Plugin.prototype = {
     return this.settings.mode;
   },
 
+  _getWidthHeight: function() {
+    var width     = this.el.getAttribute('width'),
+        height    = this.el.getAttribute('height'),
+        widthObj  = {},
+        heightObj = {};
+
+    if (window.AB.isJson(width) && window.AB.isJson(height)) {
+      widthObj  = JSON.parse(width);
+      heightObj = JSON.parse(height);
+
+      for (var key in widthObj) {
+        if (widthObj.hasOwnProperty(key)) {
+          if (window.AB.mediaQuery.is(key)) {
+            width  = widthObj[key];
+            height = heightObj[key];
+          }
+        }
+      }
+    }
+
+    return {
+      width: width,
+      height: height
+    };
+  },
+
   _setPlaceholder: function() {
     var placeholderNode = document.createElement('div'),
         imgNode         = document.createElement('img'),
         alt             = this.el.getAttribute('alt'),
-        width           = this.el.getAttribute('width'),
-        height          = this.el.getAttribute('height'),
+        widthHeight     = this._getWidthHeight(),
+        width           = widthHeight.width,
+        height          = widthHeight.height,
         isNotReady      = !this.lazySettings.placeholder || this.el.nodeName === 'IMG' || this.el.parentNode.matches('picture') || !width || !height;
 
     if (isNotReady)
       return this;
+
+    this.el.innerHTML = '';
 
     this.el.style.overflow = 'hidden';
     this.el.style.position = 'relative';
@@ -321,7 +350,8 @@ Plugin.prototype = {
 
   _resetDisplay: function() {
     this.replaced = false;
-    this._updatePath();
+    this._setPlaceholder()
+        ._updatePath();
   },
 
   _inView: function() {

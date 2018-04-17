@@ -95,6 +95,20 @@ Recommanded usage to prevent reflow with lazy loading enabled:
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
 </div>
 ```
+If your images have different ratio depending on media query:
+```html
+<div
+  alt=""
+  width='{"smallOnly": 20, "medium": 50}'
+  height='{"smallOnly": 20, "medium": 50}'
+  data-ab-interchange='{"lazy": true, "lazySettings": {
+    "placeholder": true,
+    "offscreen":   1,
+    "delayed":     2000
+  }}"'
+  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
+</div>
+```
 
 Or on normal img tags:
 ```html
