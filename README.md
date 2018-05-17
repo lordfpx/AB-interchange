@@ -1,13 +1,13 @@
 # AB-interchange
 
-AB-interchange is a small, dependencie free and vanilla JavaScript component that conditionnaly load things depending on media queries and it also has a **lazy-loading** option:
+AB-interchange is a small, dependencie free and vanilla JavaScript component that conditionnaly load things depending on media queries and it also has a powerfull **lazy-loading** option:
 
 - **img**
 - **picture**
 - **background-image**
 - **HTML content** (Ajax)
 
-It's damn small: about **1800 bytes** (uglyfied and GZipped). It is used in the French website of [ENGIE](https://particuliers.engie.fr).
+It's damn small: about **2500 bytes** (uglyfied and GZipped). It is used in the French website of [ENGIE](https://particuliers.engie.fr).
 
 Have a look at the [Codepen demonstration](https://codepen.io/lordfpx/pen/jApqLW).
 
@@ -59,12 +59,18 @@ Then you only need to initialize with `AB.interchange()` or with some options:
 
 ```js
 abInterchange({
-  lazy      : true, // or false
-  offscreen : 1.5,  // load items only when in the view + 0.5 by default
+  mode:        'background',
+  lazy:        false,
+  lazySettings: {
+    placeholder: false, // trick to prevent reflow of the page
+    offscreen:   1.5,   // load items only when in the view + 0.5
+    delayed:     false,
+    layout:      'fluid' // can be "fixed" to fixed dimensions (not fluid)
+  }
 });
 ```
 
-Then use `data-ab-interchange` attribute to pass options.
+Then use `data-ab-interchange` attribute to pass options on each elemets if needed.
 
 `data-ab-interchange-src` attribute is where you define different sources and breakpoints defined with AB-mediaQuery.
 It should contain a list of arrays with the path to the asset and the breakpoint name. Beware to respect mobile first order. Order is **VERY** important!
@@ -75,10 +81,42 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 
 ### **img**
 
+Recommanded usage to prevent reflow with lazy loading enabled:
+```html
+<div
+  alt=""
+  width="100"
+  height="75"
+  data-ab-interchange='{"lazy": true, "lazySettings": {
+    "placeholder": true,
+    "offscreen":   1,
+    "delayed":     2000
+  }}"'
+  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
+</div>
+```
+If your images have different ratio depending on media query:
+```html
+<div
+  alt=""
+  width='{"smallOnly": 20, "medium": 50}'
+  height='{"smallOnly": 20, "medium": 50}'
+  data-ab-interchange='{"lazy": true, "lazySettings": {
+    "placeholder": true,
+    "offscreen":   1,
+    "delayed":     2000
+  }}"'
+  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
+</div>
+```
+
+Or on normal img tags:
 ```html
 <img
   alt=""
-  data-ab-interchange='{"lazy": false}"'
+  width="100"
+  height="75"
+  data-ab-interchange='{"lazy": true}"'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
 ```
 
@@ -92,7 +130,9 @@ It should contain a list of arrays with the path to the asset and the breakpoint
   <source srcset="xxx"/>
   <img
     alt=""
-    data-ab-interchange='{"lazy": false}"'
+    width="100"
+    height="75"
+    data-ab-interchange
     data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
 </picture>
 ```
@@ -102,7 +142,7 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 
 ```html
 <div
-  data-ab-interchange='{"mode": "background", "lazy": true, "offscreen": 1.5}"'
+  data-ab-interchange='{"mode": "background", "lazy": true, "lazySettings": {"offscreen": 1.5}"}'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
 </div>
 ```
@@ -112,7 +152,7 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 
 ```html
 <div
-  data-ab-interchange='{"mode": "ajax", "lazy": false}'
+  data-ab-interchange='{"mode": "ajax"}'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, mediumOnly]">
 </div>
 ```
