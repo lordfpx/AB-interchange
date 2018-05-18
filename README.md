@@ -5,7 +5,7 @@ AB-interchange is a small, dependencie free and vanilla JavaScript component tha
 - **img**
 - **picture**
 - **background-image**
-- **HTML content** (Ajax)
+- **HTML content** (AJAX)
 
 It's damn small: about **2500 bytes** (uglyfied and GZipped). It is used in the French website of [ENGIE](https://particuliers.engie.fr).
 
@@ -29,19 +29,19 @@ yarn add ab-interchange
 
 ## Setup
 
-You can then import it in your JS bundle (webpack, ES6, browserify...):
+You can then import it in your JS bundle (webpack, ES6, browserify…):
 ```js
 import abInterchange from 'ab-interchange';
 ```
 
-Or loading the js right before `</body>` if you are not using a builder.
+Or loading the JS file right before `</body>` if you are not using a builder.
 
 Because of the usage of `matchMedia` and `requestAnimationFrame`, compatibility start with IE 10. To rise compatibility up to IE 9, you can add [matchMedia polyfill](https://github.com/paulirish/matchMedia.js/) and [requestAnimationFrame polyfill](https://gist.github.com/paulirish/1579671).
 
 
 ## Usage
 
-Follow [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaquery) readme to configure it the way you like depending on your needs. For exemple:
+Follow [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaquery) readme file to configure it the way you like depending on your needs. For exemple:
 
 ```js
 abMediaQuery({
