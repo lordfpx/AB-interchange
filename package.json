@@ -30,7 +30,7 @@
   "author": "Thierry Philippe (@lordfpx)",
   "license": "ISC",
   "dependencies": {
-    "ab-mediaquery": "file:../AB-mediaQuery"
+    "ab-mediaquery": "lordfpx/AB-mediaQuery#dev"
   },
   "devDependencies": {
     "webpack": "^3.3.0"

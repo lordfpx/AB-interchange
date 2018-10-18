@@ -429,7 +429,7 @@ module.exports = window.AB;
   window.CustomEvent = CustomEvent;
 })();
 
-
+// throttle events with requestAnimationFrame
 (function() {
   var throttle = function(type, name) {
     var running = false;
@@ -448,8 +448,8 @@ module.exports = window.AB;
   /* init - you can init any event */
   throttle("resize", "ab-resize");
   throttle("scroll", "ab-scroll");
-  throttle("scroll", "ab-mousemove");
-  throttle("scroll", "ab-touchmove");
+  throttle("mousemove", "ab-mousemove");
+  throttle("touchmove", "ab-touchmove");
 })();
 
 
