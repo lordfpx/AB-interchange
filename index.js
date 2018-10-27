@@ -131,19 +131,32 @@ var _isReplaced = function() {
   this.el.classList.remove('ab-interchange-loading');
 
   var event = new CustomEvent('replaced.ab-interchange', {
-    detail: {
-      element: this.el
-    }
+    detail: { element: this.el }
   });
   window.dispatchEvent(event);
 };
 
 var _events = function() {
+  var observer, rootMargin = "";
+
   // update path, then replace
   window.addEventListener('changed.ab-mediaquery', this.resetDisplay.bind(this));
 
-  if (this.mode === 'lazy-img' || this.mode === 'lazy-background')
-    window.addEventListener('ab-scroll', _onScroll.bind(this));
+  if (this.mode === 'lazy-img' || this.mode === 'lazy-background') {
+    if ('IntersectionObserver' in window) {
+      rootMargin = parseInt((this.settings.lazySettings.offscreen - 1) * window.innerHeight) +'px';
+
+      observer = new IntersectionObserver(_onScroll.bind(this), {
+        root: null,
+        rootMargin: '0px 0px '+ rootMargin +' 0px',
+        threshold: 0
+      });
+
+      observer.observe(this.el);
+    } else {
+      window.addEventListener('ab-scroll', _onScroll.bind(this));
+    }
+  }
 };
 
 // build rules from attribute
