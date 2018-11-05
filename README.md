@@ -1,4 +1,4 @@
-# **AB-interchange**
+# AB-interchange
 
 **AB-interchange** is a small, dependency free and vanilla script to:
 
@@ -14,17 +14,15 @@ Version 1 is used on French websites of [ENGIE](https://particuliers.engie.fr) a
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/85a4444c8e573ae62a49/maintainability)](https://codeclimate.com/github/lordfpx/AB-interchange/maintainability)
 
----
 
-## **Install**
+## Install
 
 ```bash
 npm install --save ab-interchange
-````
+```
 
----
 
-## **Setup**
+## Setup
 
 Import it in your JS bundle (webpack, ES6, browserify…):
 ```js
@@ -33,9 +31,8 @@ import abInterchange from 'ab-interchange';
 
 (If you are not building your assets, simply load the script `AB-interchange.min.js` in the `dist` folder.)
 
----
 
-## **Usage**
+## Usage
 
 Follow [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaquery) readme file to configure it the way you like depending on your needs. For exemple:
 
@@ -82,9 +79,9 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 
 ---
 
-## **Examples**
+## Examples
 
-### **Lazy loading of img**
+### Lazy loading of img
 
 ```html
 <div
@@ -109,7 +106,7 @@ height='{"smallOnly": 20, "medium": 50}'
 ```
 
 
-### **background-image**
+### background-image
 
 ```html
 <div
@@ -118,7 +115,7 @@ height='{"smallOnly": 20, "medium": 50}'
 </div>
 ```
 
-### **Lazy load background-image**
+### Lazy load background-image
 
 ```html
 <div
@@ -128,7 +125,7 @@ height='{"smallOnly": 20, "medium": 50}'
 ```
 
 
-### **img or picture**
+### img or picture
 
 This usage is only interesting if you need responsive images on Internet Explorer 10 or 11.
 
@@ -158,9 +155,8 @@ This usage is only interesting if you need responsive images on Internet Explore
 </picture>
 ```
 
----
 
-## **JS event**
+## JS event
 
 **`replaced.ab-interchange`** event is automatically triggered when when an image/background-image update.
 

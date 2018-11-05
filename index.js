@@ -2,7 +2,7 @@
 
 window.AB = require('ab-mediaquery');
 
-var pluginName = 'interchange',
+var pluginName = 'abInterchange',
     attr       = 'data-ab-interchange',
     attrSrc    = 'data-ab-interchange-src',
     defaultSettings = {
