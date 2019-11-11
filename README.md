@@ -2,9 +2,7 @@
 
 **AB-interchange** is a small, dependency free and vanilla script to:
 
-- **lazy load** images and background-images
-- make **background-images responsive**
-- make **images responsive** on **IE 10** and **11** (more with polyfills)
+- responsive **lazy load** images and background-images
 
 It's damn small: about **2.3KB** (uglyfied and GZipped).
 
@@ -24,7 +22,7 @@ npm install --save ab-interchange
 
 ## Setup
 
-Import it in your JS bundle (webpack, ES6, browserify…):
+Import **abInterchange** in your JS bundle (webpack, ES6, browserify…):
 ```js
 import abInterchange from 'ab-interchange';
 ```
@@ -34,7 +32,7 @@ import abInterchange from 'ab-interchange';
 
 ## Usage
 
-Follow [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaquery) readme file to configure it the way you like depending on your needs. For exemple:
+Follow [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaquery) readme file to configure breakpoints the way you like, for exemple:
 
 ```js
 AB.plugins.mediaQuery({
@@ -48,28 +46,26 @@ AB.plugins.mediaQuery({
 });
 ```
 
-Then initialize `interchange` with some options.
+Then initialize `interchange` with some default options. You can override these options on each images/background (see below).
 
 ```js
 AB.plugins.interchange({
   mode: 'img',
   lazySettings: {
-    offscreen: 1.25,
-    delayed:   false,
+    offscreen: 1,
+    delayed:   null,
     layout:    'fluid' // can be "fixed" to fixed dimensions (not fluid)
   }
 });
 ```
 
 * **`mode` can be:**
-  - `img`: for classic `img` elements (ex: for IE 11)
-  - `lazy-img`
+  - `img`
   - `background`
-  - `lazy-background`
 
 * **`lazySettings` are for lazy modes:**
   - `offscreen`: load picture only when in the viewport * `offscreen` value
-  - `delayed`: when defined, will load the image even when not visible after xxx millisecond.
+  - `delayed`: when defined, will load the image even when not visible after xxx millisecond (good when going offline later).
   - `layout`: Can be `fluid` (default) for fluid images or `fixed` for fixed dimensions
 
 Use `data-ab-interchange` attribute to pass specific options on an element if needed.
@@ -81,32 +77,30 @@ It should contain a list of arrays with the path to the asset and the breakpoint
 
 ## Examples
 
-### Lazy loading of img
+### For img
 
 ```html
 <div
   alt=""
   width="100"
   height="75"
-  data-ab-interchange='{
-    "mode": "lazy-img",
-    "lazySettings": {
-      "offscreen": 1,
-      "delayed":   2000
-    }
-  }"'
+  data-ab-interchange='{"mode": "img"}'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
 </div>
 
 ```
 If your images have different ratio depending on media query you can provide a JSON on `width` and `height` attributes:
 ```html
-width='{"smallOnly": 20, "medium": 50}'
-height='{"smallOnly": 20, "medium": 50}'
+<div
+  alt=""
+  width='{"smallOnly": 20, "medium": 50}'
+  height='{"smallOnly": 20, "medium": 50}'
+  data-ab-interchange='{"mode": "img"}'
+  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
+</div>
 ```
 
-
-### background-image
+### For background-image
 
 ```html
 <div
@@ -115,53 +109,30 @@ height='{"smallOnly": 20, "medium": 50}'
 </div>
 ```
 
-### Lazy load background-image
+
+### How to override default settings?
 
 ```html
 <div
-  data-ab-interchange='{"mode": "lazy-background"}'
+  data-ab-interchange='{
+    "mode": "img",
+    "lazySettings": {
+      "offscreen": 1.3,
+      "delayed":   10000,
+      "layout":    "fixed"
+    }
+  }'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
 </div>
 ```
 
 
-### img or picture
-
-This usage is only interesting if you need responsive images on Internet Explorer 10 or 11.
-
-```html
-<img
-  alt="description"
-  src="my-spinner.gif"
-  width="100"
-  height="75"
-  data-ab-interchange
-  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
-```
-
-```html
-<picture>
-  <source srcset="xxx" media="(min-width: 80em)"/>
-  <source srcset="xxx" media="(min-width: 64em)"/>
-  <source srcset="xxx" media="(min-width: 48em)"/>
-  <source srcset="xxx"/>
-  <img
-    alt="description"
-    src="my-spinner.gif"
-    width="100"
-    height="75"
-    data-ab-interchange
-    data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
-</picture>
-```
-
-
 ## JS event
 
-**`replaced.ab-interchange`** event is automatically triggered when when an image/background-image update.
+**`replaced.ab-interchange`** event is automatically triggered when an image/background-image is updated.
 
 ```js
-window.addEventListener('replaced.ab-interchange', function(e){
-  console.log(e.detail.element);
+window.addEventListener('replaced.ab-interchange', function(ev) {
+  console.log(ev.detail.element);
 });
 ```

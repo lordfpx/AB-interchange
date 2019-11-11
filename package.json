@@ -33,6 +33,6 @@
     "ab-mediaquery": "lordfpx/AB-mediaQuery#dev"
   },
   "devDependencies": {
-    "webpack": "^3.3.0"
+    "webpack": "^3.12.0"
   }
 }
