@@ -2,8 +2,8 @@
   "name": "ab-interchange",
   "version": "3.0.1",
   "description": "AB-interchange: While responsive image loading is not really an easy task even today, here is a solution to manage conditional (based on breakpoints) loading of img, background-image or even HTML content.",
-  "main": "index.js",
-  "prepublishOnly": "npm run build",
+  "main": "src/index.js",
+  "prepublishOnly": "yarn build",
   "repository": {
     "type": "git",
     "url": "https://github.com/lordfpx/AB-interchange.git"
@@ -14,7 +14,13 @@
   "homepage": "https://github.com/lordfpx/AB-interchange#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack index.js dist/AB-interchange.js && webpack index.js dist/AB-interchange.min.js --optimize-minimize"
+    "serve": "yarn reset && parcel src/docs/index.html --out-dir docs",
+    "reset": "rimraf dist docs",
+    "build": "yarn reset && yarn build:demo && yarn build:dist",
+    "build:demo": "parcel build src/docs/index.html --no-source-maps --out-dir docs --public-url ./",
+    "build:dist": "yarn build:js && yarn build:jsmin",
+    "build:js": "parcel build src/index.js --no-source-maps --no-content-hash --out-dir dist --out-file AB-interchange.js --no-minify",
+    "build:jsmin": "parcel build src/index.js --no-source-maps --no-content-hash --out-dir dist --out-file AB-interchange.min.js"
   },
   "keywords": [
     "javascript",
@@ -33,6 +39,10 @@
     "ab-mediaquery": "lordfpx/AB-mediaQuery#dev"
   },
   "devDependencies": {
-    "webpack": "^3.3.0"
+    "parcel-bundler": "^1.12.4",
+    "prismjs": "^1.17.1",
+    "rimraf": "^3.0.0",
+    "tachyons": "^4.11.1",
+    "yarn": "^1.19.1"
   }
 }

@@ -1,0 +1,14 @@
+@import "../../node_modules/tachyons";
+
+main {
+  flex: 0 1 100%;
+}
+
+img {
+  display: block;
+  height: auto;
+}
+
+[data-ab-interchange] {
+  background-size: cover;
+}
