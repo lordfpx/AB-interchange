@@ -1,42 +1,35 @@
 # AB-interchange
 
-AB-interchange is a small, dependencie free and vanilla JavaScript component that conditionnaly load things depending on media queries and it also has a powerfull **lazy-loading** option:
+**AB-interchange** is a small, dependency free and vanilla script to:
 
-- **img**
-- **picture**
-- **background-image**
-- **HTML content** (AJAX)
+- **lazy load** images and background-images
+- make **background-images responsive**
+- make **images responsive** on **IE 10** and **11** (more with polyfills)
 
-It's damn small: about **2500 bytes** (uglyfied and GZipped). It is used in the French website of [ENGIE](https://particuliers.engie.fr).
+It's damn small: about **2.3KB** (uglyfied and GZipped).
 
-Have a look at the [Codepen demonstration](https://codepen.io/lordfpx/pen/jApqLW).
+Have a look at this [demonstration](https://lordfpx.github.io/AB-interchange/) (offline version in the `docs` folder).
+
+Version 1 is used on French websites of [ENGIE](https://particuliers.engie.fr) and [Gaz tarif règlementé](https://gaz-tarif-reglemente.fr/).
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/85a4444c8e573ae62a49/maintainability)](https://codeclimate.com/github/lordfpx/AB-interchange/maintainability)
 
 
 ## Install
 
-Install with npm:
 ```bash
 npm install --save ab-interchange
-````
-
-Install with yarn:
-```bash
-yarn add ab-interchange
 ```
 
 
 ## Setup
 
-You can then import it in your JS bundle (webpack, ES6, browserify…):
+Import it in your JS bundle (webpack, ES6, browserify…):
 ```js
 import abInterchange from 'ab-interchange';
 ```
 
-Or loading the JS file right before `</body>` if you are not using a builder.
-
-Because of the usage of `matchMedia` and `requestAnimationFrame`, compatibility start with IE 10. To rise compatibility up to IE 9, you can add [matchMedia polyfill](https://github.com/paulirish/matchMedia.js/) and [requestAnimationFrame polyfill](https://gist.github.com/paulirish/1579671).
+(If you are not building your assets, simply load the script `AB-interchange.min.js` in the `dist` folder.)
 
 
 ## Usage
@@ -44,7 +37,7 @@ Because of the usage of `matchMedia` and `requestAnimationFrame`, compatibility 
 Follow [AB-mediaQuery](https://www.npmjs.com/package/ab-mediaquery) readme file to configure it the way you like depending on your needs. For exemple:
 
 ```js
-abMediaQuery({
+AB.plugins.mediaQuery({
   bp: {
     smallOnly:  'screen and (max-width: 767px)',
     mediumOnly: 'screen and (min-width: 768px) and (max-width: 1024px)',
@@ -55,72 +48,96 @@ abMediaQuery({
 });
 ```
 
-Then you only need to initialize with `AB.interchange()` or with some options:
+Then initialize `interchange` with some options.
 
 ```js
-abInterchange({
-  mode:        'background',
-  lazy:        false,
+AB.plugins.interchange({
+  mode: 'img',
   lazySettings: {
-    placeholder: false, // trick to prevent reflow of the page
-    offscreen:   1.5,   // load items only when in the view + 0.5
-    delayed:     false,
-    layout:      'fluid' // can be "fixed" to fixed dimensions (not fluid)
+    offscreen: 1.25,
+    delayed:   false,
+    layout:    'fluid' // can be "fixed" to fixed dimensions (not fluid)
   }
 });
 ```
 
-Then use `data-ab-interchange` attribute to pass options on each elemets if needed.
+* **`mode` can be:**
+  - `img`: for classic `img` elements (ex: for IE 11)
+  - `lazy-img`
+  - `background`
+  - `lazy-background`
+
+* **`lazySettings` are for lazy modes:**
+  - `offscreen`: load picture only when in the viewport * `offscreen` value
+  - `delayed`: when defined, will load the image even when not visible after xxx millisecond.
+  - `layout`: Can be `fluid` (default) for fluid images or `fixed` for fixed dimensions
+
+Use `data-ab-interchange` attribute to pass specific options on an element if needed.
 
 `data-ab-interchange-src` attribute is where you define different sources and breakpoints defined with AB-mediaQuery.
 It should contain a list of arrays with the path to the asset and the breakpoint name. Beware to respect mobile first order. Order is **VERY** important!
 
-
+---
 
 ## Examples
 
-### **img**
+### Lazy loading of img
 
-Recommanded usage to prevent reflow with lazy loading enabled:
 ```html
 <div
   alt=""
   width="100"
   height="75"
-  data-ab-interchange='{"lazy": true, "lazySettings": {
-    "placeholder": true,
-    "offscreen":   1,
-    "delayed":     2000
-  }}"'
+  data-ab-interchange='{
+    "mode": "lazy-img",
+    "lazySettings": {
+      "offscreen": 1,
+      "delayed":   2000
+    }
+  }"'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
 </div>
+
 ```
-If your images have different ratio depending on media query:
+If your images have different ratio depending on media query you can provide a JSON on `width` and `height` attributes:
+```html
+width='{"smallOnly": 20, "medium": 50}'
+height='{"smallOnly": 20, "medium": 50}'
+```
+
+
+### background-image
+
 ```html
 <div
-  alt=""
-  width='{"smallOnly": 20, "medium": 50}'
-  height='{"smallOnly": 20, "medium": 50}'
-  data-ab-interchange='{"lazy": true, "lazySettings": {
-    "placeholder": true,
-    "offscreen":   1,
-    "delayed":     2000
-  }}"'
+  data-ab-interchange='{"mode": "background"}'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
 </div>
 ```
 
-Or on normal img tags:
+### Lazy load background-image
+
+```html
+<div
+  data-ab-interchange='{"mode": "lazy-background"}'
+  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
+</div>
+```
+
+
+### img or picture
+
+This usage is only interesting if you need responsive images on Internet Explorer 10 or 11.
+
 ```html
 <img
-  alt=""
+  alt="description"
+  src="my-spinner.gif"
   width="100"
   height="75"
-  data-ab-interchange='{"lazy": true}"'
+  data-ab-interchange
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
 ```
-
-### **picture**
 
 ```html
 <picture>
@@ -129,7 +146,8 @@ Or on normal img tags:
   <source srcset="xxx" media="(min-width: 48em)"/>
   <source srcset="xxx"/>
   <img
-    alt=""
+    alt="description"
+    src="my-spinner.gif"
     width="100"
     height="75"
     data-ab-interchange
@@ -138,28 +156,9 @@ Or on normal img tags:
 ```
 
 
-### **background-image**
-
-```html
-<div
-  data-ab-interchange='{"mode": "background", "lazy": true, "lazySettings": {"offscreen": 1.5}"}'
-  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
-</div>
-```
-
-
-### **XMLHttpRequest content (Ajax)**
-
-```html
-<div
-  data-ab-interchange='{"mode": "ajax"}'
-  data-ab-interchange-src="[xxx, smallOnly], [xxx, mediumOnly]">
-</div>
-```
-
-
 ## JS event
-`replaced.ab-interchange` event is automatically triggered when an IMG (or else) changed. **For IMG and HTML, it's fired only when the new content is loaded**, for background-image, immediatly, because it does not impact the layout:
+
+**`replaced.ab-interchange`** event is automatically triggered when when an image/background-image update.
 
 ```js
 window.addEventListener('replaced.ab-interchange', function(e){
