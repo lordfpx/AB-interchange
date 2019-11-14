@@ -8,7 +8,7 @@
 
 It's damn small: about **2.3KB** (uglyfied and GZipped).
 
-Have a look at the [Codepen demonstration](https://codepen.io/lordfpx/pen/jApqLW).
+Have a look at this [demonstration](https://lordfpx.github.io/AB-interchange/) (offline version in the `docs` folder).
 
 Version 1 is used on French websites of [ENGIE](https://particuliers.engie.fr) and [Gaz tarif règlementé](https://gaz-tarif-reglemente.fr/).
 

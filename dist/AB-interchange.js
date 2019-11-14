@@ -117,16 +117,16 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"HLFU":[function(require,module,exports) {
+})({"cnAZ":[function(require,module,exports) {
 // polyfill customEvent pour IE
 ;(function() {
-  if ( typeof window.CustomEvent === "function" ) return false;
+  if (typeof window.CustomEvent === "function") return false;
   function CustomEvent ( event, params ) {
     params = params || { bubbles: false, cancelable: false, detail: undefined };
-    var evt = document.createEvent( 'CustomEvent' );
-    evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+    var evt = document.createEvent('CustomEvent');
+    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
     return evt;
-   }
+  }
   CustomEvent.prototype = window.Event.prototype;
   window.CustomEvent = CustomEvent;
 })();
@@ -214,7 +214,7 @@ window.AB = {
 
 module.exports = window.AB;
 
-},{}],"RphI":[function(require,module,exports) {
+},{}],"TYbL":[function(require,module,exports) {
 'use strict';
 
 window.AB = require('another-brick');
@@ -267,7 +267,7 @@ var mediaQuery = function(opt) {
 window.AB.plugins.mediaQuery = mediaQuery;
 module.exports = window.AB;
 
-},{"another-brick":"HLFU"}],"Focm":[function(require,module,exports) {
+},{"another-brick":"cnAZ"}],"Focm":[function(require,module,exports) {
 'use strict';
 
 window.AB = require('ab-mediaquery');
@@ -548,4 +548,4 @@ var interchange = function interchange(options) {
 
 window.AB.plugins.interchange = interchange;
 module.exports = window.AB;
-},{"ab-mediaquery":"RphI"}]},{},["Focm"], null)
+},{"ab-mediaquery":"TYbL"}]},{},["Focm"], null)
