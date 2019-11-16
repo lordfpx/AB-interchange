@@ -271,10 +271,10 @@ module.exports = window.AB;
 'use strict';
 
 window.AB = require('ab-mediaquery');
-var pluginName = 'abInterchange',
-    attr = 'data-ab-interchange',
-    attrSrc = 'data-ab-interchange-src',
-    defaultSettings = {
+var pluginName = 'abInterchange';
+var attr = 'data-ab-interchange';
+var attrSrc = 'data-ab-interchange-src';
+var defaultSettings = {
   mode: 'img',
   lazySettings: {
     offscreen: 1.25,
@@ -284,7 +284,7 @@ var pluginName = 'abInterchange',
   }
 }; // Run right methods depending on 'mode'
 
-var _replace = function _replace() {
+function _replace() {
   if (this._replaced) return;
 
   switch (this.mode) {
@@ -308,10 +308,11 @@ var _replace = function _replace() {
 
       break;
   }
-}; // Replace source: img or lazy-img
+}
 
+; // Replace source: img or lazy-img
 
-var _replaceImg = function _replaceImg(lazy) {
+function _replaceImg(lazy) {
   if (this._imgNode.src === this.currentPath || lazy && !this.inView()) return;
   this._imgNode.src = this.currentPath;
 
@@ -319,17 +320,25 @@ var _replaceImg = function _replaceImg(lazy) {
 
 
   this._replaced = true;
-}; // Replace source: background or lazy-background
+}
 
+; // Replace source: background or lazy-background
 
-var _replaceBackground = function _replaceBackground(lazy) {
+function _replaceBackground(lazy) {
   if (this.el.style.backgroundImage === 'url("' + this.currentPath + '")' || lazy && !this.inView()) return;
-  if (this.currentPath) this.el.style.backgroundImage = 'url(' + this.currentPath + ')';else this.el.style.backgroundImage = 'none';
+
+  if (this.currentPath) {
+    this.el.style.backgroundImage = 'url(' + this.currentPath + ')';
+  } else {
+    this.el.style.backgroundImage = 'none';
+  }
+
   this.el.addEventListener('load', _isReplaced.bind(this));
-}; // init instance
+}
 
+; // init instance
 
-var _init = function _init() {
+function _init() {
   var that = this; // no need when using 'img' on browsers supporting that, except when using lazy loading
 
   if ((this.el.parentNode.tagName === 'PICTURE' || this.el.getAttribute('srcset')) && window.HTMLPictureElement) return; // replace anyway after a delay (for offline support)
@@ -347,18 +356,21 @@ var _init = function _init() {
   _generateRules.call(this);
 
   _updatePath.call(this);
-}; // build the DOM for lazy-img mode
+}
 
+; // build the DOM for lazy-img mode
 
-var _setPlaceholder = function _setPlaceholder() {
-  var placeholderNode = document.createElement('div'),
-      imgNode = document.createElement('img'),
-      alt = this.el.getAttribute('alt'),
-      widthHeight = _getWidthHeight.call(this),
-      width = widthHeight.width,
-      height = widthHeight.height,
-      isNotReady = !width || !height;
+function _setPlaceholder() {
+  var placeholderNode = document.createElement('div');
+  var imgNode = document.createElement('img');
+  var alt = this.el.getAttribute('alt');
 
+  var widthHeight = _getWidthHeight.call(this);
+
+  var width = widthHeight.width;
+  var height = widthHeight.height;
+  var isNotReady = !width || !height;
+  var fragment = document.createDocumentFragment();
   if (this.mode !== 'lazy-img' || isNotReady) return;
   this.el.innerHTML = '';
   this.el.style.overflow = 'hidden';
@@ -384,13 +396,15 @@ var _setPlaceholder = function _setPlaceholder() {
   imgNode.style.height = 0;
   imgNode.alt = alt === null ? '' : alt; // always put an 'alt'
 
-  this.el.appendChild(placeholderNode);
-  this.el.appendChild(imgNode);
+  fragment.appendChild(placeholderNode);
+  fragment.appendChild(imgNode);
+  this.el.appendChild(fragment);
   this._imgNode = this.el.querySelector('img');
-}; // run after source is replaced
+}
 
+; // run after source is replaced
 
-var _isReplaced = function _isReplaced() {
+function _isReplaced() {
   this.el.classList.remove('ab-interchange-loading');
   var event = new CustomEvent('replaced.ab-interchange', {
     detail: {
@@ -398,11 +412,13 @@ var _isReplaced = function _isReplaced() {
     }
   });
   window.dispatchEvent(event);
-};
+}
 
-var _events = function _events() {
-  var observer,
-      rootMargin = ""; // update path, then replace
+;
+
+function _events() {
+  var observer;
+  var rootMargin = ""; // update path, then replace
 
   window.addEventListener('changed.ab-mediaquery', this.resetDisplay.bind(this));
 
@@ -419,19 +435,21 @@ var _events = function _events() {
       window.addEventListener('ab-scroll', _onScroll.bind(this));
     }
   }
-}; // build rules from attribute
+}
 
+; // build rules from attribute
 
 var _generateRules = function _generateRules() {
-  var rulesList = [],
-      // retro compatibility: sources inside 'attr'
-  getAttrSrc = this.el.getAttribute(attrSrc) ? this.el.getAttribute(attrSrc) : this.el.getAttribute(attr),
-      rules = getAttrSrc.match(/\[[^\]]+\]/g);
+  var rulesList = []; // retro compatibility: sources inside 'attr'
+
+  var getAttrSrc = this.el.getAttribute(attrSrc) ? this.el.getAttribute(attrSrc) : this.el.getAttribute(attr);
+  var rules = getAttrSrc.match(/\[[^\]]+\]/g);
+  var rule, path, query;
 
   for (var i = 0, len = rules.length; i < len; i++) {
-    var rule = rules[i].slice(1, -1).split(', '),
-        path = rule.slice(0, -1).join(''),
-        query = rule[rule.length - 1];
+    rule = rules[i].slice(1, -1).split(', ');
+    path = rule.slice(0, -1).join('');
+    query = rule[rule.length - 1];
     rulesList.push({
       path: path,
       query: query
@@ -443,11 +461,13 @@ var _generateRules = function _generateRules() {
 
 
 var _updatePath = function _updatePath() {
-  var path = '',
-      rules = this.rules; // Iterate through each rule
+  var path = '';
+  var rules = this.rules; // Iterate through each rule
 
   for (var i = 0, len = rules.length; i < len; i++) {
-    if (window.AB.mediaQuery.is(rules[i].query)) path = rules[i].path;
+    if (window.AB.mediaQuery.is(rules[i].query)) {
+      path = rules[i].path;
+    }
   } // if path hasn't changed, return
 
 
@@ -457,39 +477,39 @@ var _updatePath = function _updatePath() {
   _replace.call(this);
 };
 
-var _onScroll = function _onScroll() {
+function _onScroll() {
   // when inView, no need to use 'delayed'
   if (this.inView() && !this._replaced) {
     clearTimeout(this._lazyTimer);
 
     _replace.call(this);
   }
-}; // define the right mode
+}
 
+; // define the right mode
 
-var _defineMode = function _defineMode() {
+function _defineMode() {
   // if img tag: no choice
   if (this.el.tagName === 'IMG') return 'img';
   return this.settings.mode;
-}; // get width and height from attributes and manage multiple dimensions
+}
 
+; // get width and height from attributes and manage multiple dimensions
 
-var _getWidthHeight = function _getWidthHeight() {
-  var width = this.el.getAttribute('width'),
-      height = this.el.getAttribute('height'),
-      widthObj = {},
-      heightObj = {};
+function _getWidthHeight() {
+  var width = this.el.getAttribute('width');
+  var height = this.el.getAttribute('height');
+  var widthObj = {};
+  var heightObj = {};
 
   if (window.AB.isJson(width) && window.AB.isJson(height)) {
     widthObj = JSON.parse(width);
     heightObj = JSON.parse(height);
 
     for (var key in widthObj) {
-      if (widthObj.hasOwnProperty(key)) {
-        if (window.AB.mediaQuery.is(key)) {
-          width = widthObj[key];
-          height = heightObj[key];
-        }
+      if (widthObj.hasOwnProperty(key) && window.AB.mediaQuery.is(key)) {
+        width = widthObj[key];
+        height = heightObj[key];
       }
     }
   }
@@ -498,7 +518,9 @@ var _getWidthHeight = function _getWidthHeight() {
     width: width,
     height: height
   };
-};
+}
+
+;
 
 var Plugin = function Plugin(el, options) {
   this.el = el;
@@ -525,11 +547,11 @@ Plugin.prototype = {
     _updatePath.call(this);
   },
   inView: function inView() {
-    var windowHeight = window.innerHeight,
-        rect = this.el.getBoundingClientRect(),
-        elHeight = this.el.offsetHeight,
-        checkTop = -elHeight - windowHeight * (this.settings.lazySettings.offscreen - 1),
-        checkBottom = windowHeight + windowHeight * (this.settings.lazySettings.offscreen - 1);
+    var windowHeight = window.innerHeight;
+    var rect = this.el.getBoundingClientRect();
+    var elHeight = this.el.offsetHeight;
+    var checkTop = -elHeight - windowHeight * (this.settings.lazySettings.offscreen - 1);
+    var checkBottom = windowHeight + windowHeight * (this.settings.lazySettings.offscreen - 1);
     return rect.top >= checkTop && rect.top <= checkBottom;
   }
 };
@@ -543,7 +565,9 @@ var interchange = function interchange(options) {
   } // register plugin and options
 
 
-  if (!window.AB.options[pluginName]) window.AB.options[pluginName] = options;
+  if (!window.AB.options[pluginName]) {
+    window.AB.options[pluginName] = options;
+  }
 };
 
 window.AB.plugins.interchange = interchange;
