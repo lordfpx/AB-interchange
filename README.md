@@ -62,7 +62,7 @@ AB.plugins.interchange({
 ```
 
 * **`mode` can be:**
-  - `img`: for classic `img` elements (ex: for IE 11)
+  - `img`: for classic `img` element on old browsers only (ex: for IE 11)
   - `lazy-img`
   - `background`
   - `lazy-background`
