@@ -308,9 +308,8 @@ function _replace() {
 
       break;
   }
-}
+} // Replace source: img or lazy-img
 
-; // Replace source: img or lazy-img
 
 function _replaceImg(lazy) {
   if (this._imgNode.src === this.currentPath || lazy && !this.inView()) return;
@@ -320,9 +319,8 @@ function _replaceImg(lazy) {
 
 
   this._replaced = true;
-}
+} // Replace source: background or lazy-background
 
-; // Replace source: background or lazy-background
 
 function _replaceBackground(lazy) {
   if (this.el.style.backgroundImage === 'url("' + this.currentPath + '")' || lazy && !this.inView()) return;
@@ -334,9 +332,8 @@ function _replaceBackground(lazy) {
   }
 
   this.el.addEventListener('load', _isReplaced.bind(this));
-}
+} // init instance
 
-; // init instance
 
 function _init() {
   var that = this; // no need when using 'img' on browsers supporting that, except when using lazy loading
@@ -356,9 +353,8 @@ function _init() {
   _generateRules.call(this);
 
   _updatePath.call(this);
-}
+} // build the DOM for lazy-img mode
 
-; // build the DOM for lazy-img mode
 
 function _setPlaceholder() {
   var placeholderNode = document.createElement('div');
@@ -400,9 +396,8 @@ function _setPlaceholder() {
   fragment.appendChild(imgNode);
   this.el.appendChild(fragment);
   this._imgNode = this.el.querySelector('img');
-}
+} // run after source is replaced
 
-; // run after source is replaced
 
 function _isReplaced() {
   this.el.classList.remove('ab-interchange-loading');
@@ -413,8 +408,6 @@ function _isReplaced() {
   });
   window.dispatchEvent(event);
 }
-
-;
 
 function _events() {
   var observer;
@@ -435,11 +428,10 @@ function _events() {
       window.addEventListener('ab-scroll', _onScroll.bind(this));
     }
   }
-}
+} // build rules from attribute
 
-; // build rules from attribute
 
-var _generateRules = function _generateRules() {
+function _generateRules() {
   var rulesList = []; // retro compatibility: sources inside 'attr'
 
   var getAttrSrc = this.el.getAttribute(attrSrc) ? this.el.getAttribute(attrSrc) : this.el.getAttribute(attr);
@@ -457,10 +449,10 @@ var _generateRules = function _generateRules() {
   }
 
   this.rules = rulesList;
-}; // Change source path depending on rules
+} // Change source path depending on rules
 
 
-var _updatePath = function _updatePath() {
+function _updatePath() {
   var path = '';
   var rules = this.rules; // Iterate through each rule
 
@@ -475,7 +467,7 @@ var _updatePath = function _updatePath() {
   this.currentPath = path;
 
   _replace.call(this);
-};
+}
 
 function _onScroll() {
   // when inView, no need to use 'delayed'
@@ -484,17 +476,15 @@ function _onScroll() {
 
     _replace.call(this);
   }
-}
+} // define the right mode
 
-; // define the right mode
 
 function _defineMode() {
   // if img tag: no choice
   if (this.el.tagName === 'IMG') return 'img';
   return this.settings.mode;
-}
+} // get width and height from attributes and manage multiple dimensions
 
-; // get width and height from attributes and manage multiple dimensions
 
 function _getWidthHeight() {
   var width = this.el.getAttribute('width');
@@ -519,8 +509,6 @@ function _getWidthHeight() {
     height: height
   };
 }
-
-;
 
 var Plugin = function Plugin(el, options) {
   this.el = el;
@@ -556,7 +544,7 @@ Plugin.prototype = {
   }
 };
 
-var interchange = function interchange(options) {
+function interchange(options) {
   var elements = document.querySelectorAll('[' + attr + ']');
 
   for (var i = 0, len = elements.length; i < len; i++) {
@@ -568,7 +556,7 @@ var interchange = function interchange(options) {
   if (!window.AB.options[pluginName]) {
     window.AB.options[pluginName] = options;
   }
-};
+}
 
 window.AB.plugins.interchange = interchange;
 module.exports = window.AB;

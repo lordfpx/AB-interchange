@@ -32,7 +32,7 @@ function _replace() {
       _replaceBackground.call(this, true);
       break;
   }
-};
+}
 
 // Replace source: img or lazy-img
 function _replaceImg(lazy) {
@@ -44,7 +44,7 @@ function _replaceImg(lazy) {
 
   // we are done
   this._replaced = true;
-};
+}
 
 // Replace source: background or lazy-background
 function _replaceBackground(lazy) {
@@ -58,7 +58,7 @@ function _replaceBackground(lazy) {
   }
 
   this.el.addEventListener('load', _isReplaced.bind(this));
-};
+}
 
 // init instance
 function _init() {
@@ -79,7 +79,7 @@ function _init() {
   _events.call(this);
   _generateRules.call(this);
   _updatePath.call(this);
-};
+}
 
 // build the DOM for lazy-img mode
 function _setPlaceholder() {
@@ -125,7 +125,7 @@ function _setPlaceholder() {
   this.el.appendChild(fragment);
 
   this._imgNode = this.el.querySelector('img');
-};
+}
 
 // run after source is replaced
 function _isReplaced() {
@@ -135,7 +135,7 @@ function _isReplaced() {
     detail: { element: this.el }
   });
   window.dispatchEvent(event);
-};
+}
 
 function _events() {
   var observer;
@@ -159,10 +159,10 @@ function _events() {
       window.addEventListener('ab-scroll', _onScroll.bind(this));
     }
   }
-};
+}
 
 // build rules from attribute
-var _generateRules = function() {
+function _generateRules() {
   var rulesList  = [];
   // retro compatibility: sources inside 'attr'
   var getAttrSrc = this.el.getAttribute(attrSrc) ? this.el.getAttribute(attrSrc) : this.el.getAttribute(attr);
@@ -181,10 +181,10 @@ var _generateRules = function() {
   }
 
   this.rules = rulesList;
-};
+}
 
 // Change source path depending on rules
-var _updatePath = function() {
+function _updatePath() {
   var path = '';
   var rules = this.rules;
 
@@ -200,7 +200,7 @@ var _updatePath = function() {
 
   this.currentPath = path;
   _replace.call(this);
-};
+}
 
 function _onScroll() {
   // when inView, no need to use 'delayed'
@@ -208,7 +208,7 @@ function _onScroll() {
     clearTimeout(this._lazyTimer);
     _replace.call(this);
   }
-};
+}
 
 // define the right mode
 function _defineMode() {
@@ -216,7 +216,7 @@ function _defineMode() {
   if (this.el.tagName === 'IMG') return 'img';
 
   return this.settings.mode;
-};
+}
 
 // get width and height from attributes and manage multiple dimensions
 function _getWidthHeight() {
@@ -241,7 +241,7 @@ function _getWidthHeight() {
     width: width,
     height: height,
   };
-};
+}
 
 
 var Plugin = function (el, options) {
@@ -280,8 +280,9 @@ Plugin.prototype = {
   },
 };
 
-var interchange = function(options) {
+function interchange(options) {
   var elements = document.querySelectorAll('['+ attr +']');
+
   for (var i = 0, len = elements.length; i < len; i++) {
     if (elements[i][pluginName]) continue;
     elements[i][pluginName] = new Plugin(elements[i], options);
@@ -291,7 +292,7 @@ var interchange = function(options) {
   if (!window.AB.options[pluginName]) {
     window.AB.options[pluginName] = options;
   }
-};
+}
 
 window.AB.plugins.interchange = interchange;
 module.exports = window.AB;
