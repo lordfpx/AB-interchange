@@ -4,24 +4,21 @@ window.AB = require('ab-mediaquery');
 
 var pluginName = 'abInterchange';
 var attr = 'data-ab-interchange';
-var attrSrc = 'data-ab-interchange-src';
+var attrSrc = attr +'-src';
 var defaultSettings = {
-  mode: 'img',
+  mode: 'lazy-img',
   lazySettings: {
     offscreen: 1.25,
-    delayed: false,
-    layout: 'fluid', // 'fixed': fixed dimensions
+    layout: 'fluid', // or 'fixed' for fixed dimensions
   },
 };
 
 // Run right methods depending on 'mode'
 function _replace() {
-  if (this._replaced) return;
+  if (this._replaced)
+    return;
 
   switch(this.mode) {
-    case 'img':
-      _replaceImg.call(this);
-      break;
     case 'lazy-img':
       _replaceImg.call(this, true);
       break;
@@ -34,7 +31,7 @@ function _replace() {
   }
 }
 
-// Replace source: img or lazy-img
+// Replace source: lazy-img
 function _replaceImg(lazy) {
   if (this._imgNode.src === this.currentPath || (lazy && !this.inView()))
     return;
@@ -51,34 +48,8 @@ function _replaceBackground(lazy) {
   if (this.el.style.backgroundImage === 'url("'+ this.currentPath +'")' || (lazy && !this.inView()))
     return;
 
-  if (this.currentPath) {
-    this.el.style.backgroundImage = 'url('+ this.currentPath +')';
-  } else {
-    this.el.style.backgroundImage = 'none';
-  }
-
+  this.el.style.backgroundImage = this.currentPath ? 'url('+ this.currentPath +')' : 'none';
   this.el.addEventListener('load', _isReplaced.bind(this));
-}
-
-// init instance
-function _init() {
-  var that = this;
-
-  // no need when using 'img' on browsers supporting that, except when using lazy loading
-  if ((this.el.parentNode.tagName === 'PICTURE' || this.el.getAttribute('srcset')) && window.HTMLPictureElement)
-    return;
-
-  // replace anyway after a delay (for offline support)
-  if (this.settings.lazySettings.delayed) {
-    this._lazyTimer = setTimeout(function() {
-      _replace.call(that);
-    }, this.settings.lazySettings.delayed);
-  }
-
-  _setPlaceholder.call(this);
-  _events.call(this);
-  _generateRules.call(this);
-  _updatePath.call(this);
 }
 
 // build the DOM for lazy-img mode
@@ -92,7 +63,8 @@ function _setPlaceholder() {
   var isNotReady = !width || !height;
   var fragment = document.createDocumentFragment();
 
-  if (this.mode !== 'lazy-img' || isNotReady) return;
+  if (this.mode !== 'lazy-img' || isNotReady)
+    return;
 
   this.el.innerHTML = '';
 
@@ -109,14 +81,8 @@ function _setPlaceholder() {
   placeholderNode.style.paddingTop = (height / width * 100).toFixed(2) + "%";
 
   imgNode.style.position = 'absolute';
-  imgNode.style.top = 0;
-  imgNode.style.right = 0;
-  imgNode.style.bottom = 0;
-  imgNode.style.left = 0;
-  imgNode.style.maxHeight = '100%';
-  imgNode.style.minHeight = '100%';
-  imgNode.style.maxWidth = '100%';
-  imgNode.style.minWidth = '100%';
+  imgNode.style.top = imgNode.style.right = imgNode.style.bottom = imgNode.style.left = 0;
+  imgNode.style.maxHeight = imgNode.style.minHeight = imgNode.style.maxWidth = imgNode.style.minWidth = '100%';
   imgNode.style.height = 0;
   imgNode.alt = (alt === null) ? '' : alt; // always put an 'alt'
 
@@ -131,7 +97,7 @@ function _setPlaceholder() {
 function _isReplaced() {
   this.el.classList.remove('ab-interchange-loading');
 
-  var event = new CustomEvent('replaced.ab-interchange', {
+  var event = new CustomEvent(pluginName +'.replaced', {
     detail: { element: this.el }
   });
   window.dispatchEvent(event);
@@ -156,6 +122,7 @@ function _events() {
 
       observer.observe(this.el);
     } else {
+      // 'ab-scroll' is a custom event from AB dependency
       window.addEventListener('ab-scroll', _onScroll.bind(this));
     }
   }
@@ -163,9 +130,9 @@ function _events() {
 
 // build rules from attribute
 function _generateRules() {
-  var rulesList  = [];
   // retro compatibility: sources inside 'attr'
-  var getAttrSrc = this.el.getAttribute(attrSrc) ? this.el.getAttribute(attrSrc) : this.el.getAttribute(attr);
+  var getAttrSrc = this.el.getAttribute(attrSrc) || this.el.getAttribute(attr);
+  var rulesList  = [];
   var rules = getAttrSrc.match(/\[[^\]]+\]/g);
   var rule, path, query;
 
@@ -205,17 +172,8 @@ function _updatePath() {
 function _onScroll() {
   // when inView, no need to use 'delayed'
   if (this.inView() && !this._replaced) {
-    clearTimeout(this._lazyTimer);
     _replace.call(this);
   }
-}
-
-// define the right mode
-function _defineMode() {
-  // if img tag: no choice
-  if (this.el.tagName === 'IMG') return 'img';
-
-  return this.settings.mode;
 }
 
 // get width and height from attributes and manage multiple dimensions
@@ -243,6 +201,13 @@ function _getWidthHeight() {
   };
 }
 
+// init instance
+function _init() {
+  _setPlaceholder.call(this);
+  _events.call(this);
+  _generateRules.call(this);
+  _updatePath.call(this);
+}
 
 var Plugin = function (el, options) {
   this.el = el;
@@ -252,19 +217,21 @@ var Plugin = function (el, options) {
 
   this.rules = [];
   this.currentPath = '';
-  this.mode = _defineMode.call(this);
+  this.mode = this.settings.mode;
   this.replaced = false;
-  this._lazyTimer; // for delayed setTimeout
   this._imgNode = this.el; // where the source will be updated
+
+  // no need when using 'img' on browsers supporting that, except when using lazy loading
+  if ((this.el.tagName === 'IMG' || this.el.parentNode.tagName === 'PICTURE' || this.el.getAttribute('srcset')) && window.HTMLPictureElement)
+    return;
 
   _init.call(this);
 };
 
 Plugin.prototype = {
-  // Force elmeent refresh
+  // Force element refresh
   resetDisplay: function() {
     this._replaced = false;
-
     _setPlaceholder.call(this);
     _updatePath.call(this);
   },
