@@ -25,7 +25,6 @@
         <ul>
           <li><b>lazy load</b> images and background-images</li>
           <li>give responsiveness to <b>background-images</b></li>
-          <li>give responsiveness to images on <b>IE 10 and 11</b></li>
         </ul>
       </div>
 
@@ -48,14 +47,74 @@ AB.plugins.mediaQuery({
         <pre><code class="language-javascript">
 AB.plugins.interchange({
   lazySettings: {
-    offscreen: 1,
-    delayed:   false,
+    offscreen: 1.25,
     layout:    'fluid' // can be "fixed" to fixed dimensions (not fluid)
   }
 });
         </code></pre>
 
         <h2 class="dark-pink">Example</h2>
+
+        <h3 class="dark-pink">Responsive background-image</h3>
+
+        <div class="flex flex-wrap justify-center">
+          <div
+            class="outline w5 ma2"
+            style="height: 200px;"
+            data-ab-interchange='{"mode": "background"}'
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=1, smallOnly], [https://picsum.photos/400/400?random=1, medium]"
+          ></div>
+          <div
+            class="outline w5 ma2"
+            style="height: 200px;"
+            data-ab-interchange='{"mode": "background"}'
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=2, smallOnly], [https://picsum.photos/400/400?random=2, medium]"
+          ></div>
+          <div
+            class="outline w5 ma2"
+            style="height: 200px;"
+            data-ab-interchange='{"mode": "background"}'
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=3, smallOnly], [https://picsum.photos/400/400?random=3, medium]"
+          ></div>
+          <div
+            class="outline w5 ma2"
+            style="height: 200px;"
+            data-ab-interchange='{"mode": "background"}'
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=4, smallOnly], [https://picsum.photos/400/400?random=4, medium]"
+          ></div>
+          <div
+            class="outline w5 ma2"
+            style="height: 200px;"
+            data-ab-interchange='{"mode": "background"}'
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=5, smallOnly], [https://picsum.photos/400/400?random=5, medium]"
+          ></div>
+          <div
+            class="outline w5 ma2"
+            style="height: 200px;"
+            data-ab-interchange='{"mode": "background"}'
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=6, smallOnly], [https://picsum.photos/400/400?random=6, medium]"
+          ></div>
+          <div
+            class="outline w5 ma2"
+            style="height: 200px;"
+            data-ab-interchange='{"mode": "background"}'
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=7, smallOnly], [https://picsum.photos/400/400?random=7, medium]"
+          ></div>
+          <div
+            class="outline w5 ma2"
+            style="height: 200px;"
+            data-ab-interchange='{"mode": "background"}'
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=8, smallOnly], [https://picsum.photos/400/400?random=8, medium]"
+          ></div>
+          <div
+            class="outline w5 ma2"
+            style="height: 200px;"
+            data-ab-interchange='{"mode": "background"}'
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=9, smallOnly], [https://picsum.photos/400/400?random=9, medium]"
+          ></div>
+        </div>
+
+        <hr>
 
         <h3 class="dark-pink">Responsive lazy background-image</h3>
 
@@ -64,55 +123,55 @@ AB.plugins.interchange({
             class="outline w5 ma2"
             style="height: 200px;"
             data-ab-interchange='{"mode": "lazy-background"}'
-            data-ab-interchange-src="[https://picsum.photos/200/200?random=1, smallOnly], [https://picsum.photos/400/400?random=1, medium]"
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=21, smallOnly], [https://picsum.photos/400/400?random=21, medium]"
           ></div>
           <div
             class="outline w5 ma2"
             style="height: 200px;"
             data-ab-interchange='{"mode": "lazy-background"}'
-            data-ab-interchange-src="[https://picsum.photos/200/200?random=2, smallOnly], [https://picsum.photos/400/400?random=2, medium]"
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=22, smallOnly], [https://picsum.photos/400/400?random=22, medium]"
           ></div>
           <div
             class="outline w5 ma2"
             style="height: 200px;"
             data-ab-interchange='{"mode": "lazy-background"}'
-            data-ab-interchange-src="[https://picsum.photos/200/200?random=3, smallOnly], [https://picsum.photos/400/400?random=3, medium]"
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=23, smallOnly], [https://picsum.photos/400/400?random=23, medium]"
           ></div>
           <div
             class="outline w5 ma2"
             style="height: 200px;"
             data-ab-interchange='{"mode": "lazy-background"}'
-            data-ab-interchange-src="[https://picsum.photos/200/200?random=4, smallOnly], [https://picsum.photos/400/400?random=4, medium]"
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=24, smallOnly], [https://picsum.photos/400/400?random=24, medium]"
           ></div>
           <div
             class="outline w5 ma2"
             style="height: 200px;"
             data-ab-interchange='{"mode": "lazy-background"}'
-            data-ab-interchange-src="[https://picsum.photos/200/200?random=5, smallOnly], [https://picsum.photos/400/400?random=5, medium]"
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=25, smallOnly], [https://picsum.photos/400/400?random=25, medium]"
           ></div>
           <div
             class="outline w5 ma2"
             style="height: 200px;"
             data-ab-interchange='{"mode": "lazy-background"}'
-            data-ab-interchange-src="[https://picsum.photos/200/200?random=6, smallOnly], [https://picsum.photos/400/400?random=6, medium]"
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=26, smallOnly], [https://picsum.photos/400/400?random=26, medium]"
           ></div>
           <div
             class="outline w5 ma2"
             style="height: 200px;"
             data-ab-interchange='{"mode": "lazy-background"}'
-            data-ab-interchange-src="[https://picsum.photos/200/200?random=7, smallOnly], [https://picsum.photos/400/400?random=7, medium]"
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=27, smallOnly], [https://picsum.photos/400/400?random=27, medium]"
           ></div>
           <div
             class="outline w5 ma2"
             style="height: 200px;"
             data-ab-interchange='{"mode": "lazy-background"}'
-            data-ab-interchange-src="[https://picsum.photos/200/200?random=8, smallOnly], [https://picsum.photos/400/400?random=8, medium]"
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=28, smallOnly], [https://picsum.photos/400/400?random=28, medium]"
           ></div>
           <div
             class="outline w5 ma2"
             style="height: 200px;"
             data-ab-interchange='{"mode": "lazy-background"}'
-            data-ab-interchange-src="[https://picsum.photos/200/200?random=9, smallOnly], [https://picsum.photos/400/400?random=9, medium]"
+            data-ab-interchange-src="[https://picsum.photos/200/200?random=29, smallOnly], [https://picsum.photos/400/400?random=29, medium]"
           ></div>
         </div>
 
@@ -213,217 +272,6 @@ AB.plugins.interchange({
           </div>
         </div>
 
-        <hr>
-
-        <h3 class="dark-pink">Responsive image (totally useless and soon deprecated!)</h3>
-
-        <div class="flex flex-wrap justify-center">
-          <div class="outline w5 ma2">
-            <img
-              alt="description"
-              src="https://picsum.photos/400/400?random=21"
-              style="width:100%;"
-              data-ab-interchange
-              data-ab-interchange-src="[https://picsum.photos/200/200?random=21, smallOnly], [https://picsum.photos/400/400?random=21, medium]"
-            />
-          </div>
-          <div class="outline w5 ma2">
-            <img
-              alt="description"
-              src="https://picsum.photos/400/400?random=22"
-              style="width:100%;"
-              data-ab-interchange
-              data-ab-interchange-src="[https://picsum.photos/200/200?random=22, smallOnly], [https://picsum.photos/400/400?random=22, medium]"
-            />
-          </div>
-          <div class="outline w5 ma2">
-            <img
-              alt="description"
-              src="https://picsum.photos/400/400?random=23"
-              style="width:100%;"
-              data-ab-interchange
-              data-ab-interchange-src="[https://picsum.photos/200/200?random=23, smallOnly], [https://picsum.photos/400/400?random=23, medium]"
-            />
-          </div>
-          <div class="outline w5 ma2">
-            <img
-              alt="description"
-              src="https://picsum.photos/400/400?random=24"
-              style="width:100%;"
-              data-ab-interchange
-              data-ab-interchange-src="[https://picsum.photos/200/200?random=24, smallOnly], [https://picsum.photos/400/400?random=24, medium]"
-            />
-          </div>
-          <div class="outline w5 ma2">
-            <img
-              alt="description"
-              src="https://picsum.photos/400/400?random=25"
-              style="width:100%;"
-              data-ab-interchange
-              data-ab-interchange-src="[https://picsum.photos/200/200?random=25, smallOnly], [https://picsum.photos/400/400?random=25, medium]"
-            />
-          </div>
-          <div class="outline w5 ma2">
-            <img
-              alt="description"
-              src="https://picsum.photos/400/400?random=26"
-              style="width:100%;"
-              data-ab-interchange
-              data-ab-interchange-src="[https://picsum.photos/200/200?random=26, smallOnly], [https://picsum.photos/400/400?random=26, medium]"
-            />
-          </div>
-          <div class="outline w5 ma2">
-            <img
-              alt="description"
-              src="https://picsum.photos/400/400?random=27"
-              style="width:100%;"
-              data-ab-interchange
-              data-ab-interchange-src="[https://picsum.photos/200/200?random=27, smallOnly], [https://picsum.photos/400/400?random=27, medium]"
-            />
-          </div>
-          <div class="outline w5 ma2">
-            <img
-              alt="description"
-              src="https://picsum.photos/400/400?random=28"
-              style="width:100%;"
-              data-ab-interchange
-              data-ab-interchange-src="[https://picsum.photos/200/200?random=28, smallOnly], [https://picsum.photos/400/400?random=28, medium]"
-            />
-          </div>
-          <div class="outline w5 ma2">
-            <img
-              alt="description"
-              src="https://picsum.photos/400/400?random=29"
-              style="width:100%;"
-              data-ab-interchange
-              data-ab-interchange-src="[https://picsum.photos/200/200?random=29, smallOnly], [https://picsum.photos/400/400?random=29, medium]"
-            />
-          </div>
-        </div>
-
-        <hr>
-
-        <h3 class="dark-pink">Responsive picture (totally useless and soon deprecated!)</h3>
-
-        <div class="flex flex-wrap justify-center">
-          <div class="outline w5 ma2">
-            <picture>
-              <source srcset="https://picsum.photos/400/400?random=31" media="screen and (min-width: 768px)"/>
-              <img
-                alt="description"
-                src="https://picsum.photos/200/200?random=31"
-                width="100"
-                height="100"
-                style="width: 100%;"
-                data-ab-interchange
-                data-ab-interchange-src="[https://picsum.photos/200/200?random=31, smallOnly], [https://picsum.photos/400/400?random=31, medium]"/>
-            </picture>
-          </div>
-          <div class="outline w5 ma2">
-              <picture>
-                <source srcset="https://picsum.photos/400/400?random=32" media="screen and (min-width: 768px)"/>
-                <img
-                  alt="description"
-                  src="https://picsum.photos/200/200?random=32"
-                  width="100"
-                  height="100"
-                  style="width: 100%;"
-                  data-ab-interchange
-                  data-ab-interchange-src="[https://picsum.photos/200/200?random=32, smallOnly], [https://picsum.photos/400/400?random=32, medium]"/>
-              </picture>
-          </div>
-          <div class="outline w5 ma2">
-            <picture>
-              <source srcset="https://picsum.photos/400/400?random=33" media="screen and (min-width: 768px)"/>
-              <img
-                alt="description"
-                src="https://picsum.photos/200/200?random=33"
-                width="100"
-                height="100"
-                style="width: 100%;"
-                data-ab-interchange
-                data-ab-interchange-src="[https://picsum.photos/200/200?random=33, smallOnly], [https://picsum.photos/400/400?random=33, medium]"/>
-            </picture>
-          </div>
-          <div class="outline w5 ma2">
-            <picture>
-              <source srcset="https://picsum.photos/400/400?random=34" media="screen and (min-width: 768px)"/>
-              <img
-                alt="description"
-                src="https://picsum.photos/200/200?random=34"
-                width="100"
-                height="100"
-                style="width: 100%;"
-                data-ab-interchange
-                data-ab-interchange-src="[https://picsum.photos/200/200?random=34, smallOnly], [https://picsum.photos/400/400?random=34, medium]"/>
-            </picture>
-          </div>
-          <div class="outline w5 ma2">
-            <picture>
-              <source srcset="https://picsum.photos/400/400?random=35" media="screen and (min-width: 768px)"/>
-              <img
-                alt="description"
-                src="https://picsum.photos/200/200?random=35"
-                width="100"
-                height="100"
-                style="width: 100%;"
-                data-ab-interchange
-                data-ab-interchange-src="[https://picsum.photos/200/200?random=35, smallOnly], [https://picsum.photos/400/400?random=35, medium]"/>
-            </picture>
-          </div>
-          <div class="outline w5 ma2">
-            <picture>
-              <source srcset="https://picsum.photos/400/400?random=36" media="screen and (min-width: 768px)"/>
-              <img
-                alt="description"
-                src="https://picsum.photos/200/200?random=36"
-                width="100"
-                height="100"
-                style="width: 100%;"
-                data-ab-interchange
-                data-ab-interchange-src="[https://picsum.photos/200/200?random=36, smallOnly], [https://picsum.photos/400/400?random=36, medium]"/>
-            </picture>
-          </div>
-          <div class="outline w5 ma2">
-            <picture>
-              <source srcset="https://picsum.photos/400/400?random=37" media="screen and (min-width: 768px)"/>
-              <img
-                alt="description"
-                src="https://picsum.photos/200/200?random=37"
-                width="100"
-                height="100"
-                style="width: 100%;"
-                data-ab-interchange
-                data-ab-interchange-src="[https://picsum.photos/200/200?random=37, smallOnly], [https://picsum.photos/400/400?random=37, medium]"/>
-            </picture>
-          </div>
-          <div class="outline w5 ma2">
-            <picture>
-              <source srcset="https://picsum.photos/400/400?random=38" media="screen and (min-width: 768px)"/>
-              <img
-                alt="description"
-                src="https://picsum.photos/200/200?random=38"
-                width="100"
-                height="100"
-                style="width: 100%;"
-                data-ab-interchange
-                data-ab-interchange-src="[https://picsum.photos/200/200?random=38, smallOnly], [https://picsum.photos/400/400?random=38, medium]"/>
-            </picture>
-          </div>
-          <div class="outline w5 ma2">
-            <picture>
-              <source srcset="https://picsum.photos/400/400?random=39" media="screen and (min-width: 768px)"/>
-              <img
-                alt="description"
-                src="https://picsum.photos/200/200?random=39"
-                width="100"
-                height="100"
-                style="width: 100%;"
-                data-ab-interchange
-                data-ab-interchange-src="[https://picsum.photos/200/200?random=39, smallOnly], [https://picsum.photos/400/400?random=39, medium]"/>
-            </picture>
-          </div>
-        </div>
       </div>
     </main>
 

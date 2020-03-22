@@ -15,8 +15,7 @@ AB.plugins.mediaQuery({
 
 AB.plugins.interchange({
   lazySettings: {
-    offscreen: 1,
-    delayed:   false,
+    offscreen: 1.25,
     layout:    'fluid' // can be "fixed" to fixed dimensions (not fluid)
   }
 });

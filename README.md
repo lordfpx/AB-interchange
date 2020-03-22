@@ -3,16 +3,21 @@
 **AB-interchange** is a small, dependency free and vanilla script to:
 
 - **lazy load** images and background-images
-- make **background-images responsive**
-- make **images responsive** on **IE 10** and **11** (more with polyfills)
+- give responsiveness to **background-images**
 
-It's damn small: about **2.3KB** (uglyfied and GZipped).
+It's damn small: about **2.6KB** (uglyfied and GZipped).
 
-Have a look at this [demonstration](https://lordfpx.github.io/AB-interchange/) (offline version in the `docs` folder).
+**Have a look at this [Demonstration page](https://lordfpx.github.io/AB-interchange/) (offline version in the `docs` folder).**
 
 Version 1 is used on French websites of [ENGIE](https://particuliers.engie.fr) and [Gaz tarif règlementé](https://gaz-tarif-reglemente.fr/).
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/85a4444c8e573ae62a49/maintainability)](https://codeclimate.com/github/lordfpx/AB-interchange/maintainability)
+
+
+## Important news
+
+- removed `<img>` and `<picture>` support since it's natif and useless on IE 11.
+- removed `delayed` option that was quite useless and introduced code complexity
 
 
 ## Install
@@ -52,24 +57,21 @@ Then initialize `interchange` with some options.
 
 ```js
 AB.plugins.interchange({
-  mode: 'img',
+  mode: 'lazy-img',
   lazySettings: {
     offscreen: 1.25,
-    delayed:   false,
     layout:    'fluid' // can be "fixed" to fixed dimensions (not fluid)
   }
 });
 ```
 
 * **`mode` can be:**
-  - `img`: for classic `img` element on old browsers only (ex: for IE 11)
   - `lazy-img`
   - `background`
   - `lazy-background`
 
 * **`lazySettings` are for lazy modes:**
   - `offscreen`: load picture only when in the viewport * `offscreen` value
-  - `delayed`: when defined, will load the image even when not visible after xxx millisecond.
   - `layout`: Can be `fluid` (default) for fluid images or `fixed` for fixed dimensions
 
 Use `data-ab-interchange` attribute to pass specific options on an element if needed.
@@ -92,7 +94,6 @@ It should contain a list of arrays with the path to the asset and the breakpoint
     "mode": "lazy-img",
     "lazySettings": {
       "offscreen": 1,
-      "delayed":   2000
     }
   }"'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
@@ -122,37 +123,6 @@ height='{"smallOnly": 20, "medium": 50}'
   data-ab-interchange='{"mode": "lazy-background"}'
   data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]">
 </div>
-```
-
-
-### img or picture
-
-This usage is only interesting if you need responsive images on Internet Explorer 10 or 11.
-
-```html
-<img
-  alt="description"
-  src="my-spinner.gif"
-  width="100"
-  height="75"
-  data-ab-interchange
-  data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
-```
-
-```html
-<picture>
-  <source srcset="xxx" media="(min-width: 80em)"/>
-  <source srcset="xxx" media="(min-width: 64em)"/>
-  <source srcset="xxx" media="(min-width: 48em)"/>
-  <source srcset="xxx"/>
-  <img
-    alt="description"
-    src="my-spinner.gif"
-    width="100"
-    height="75"
-    data-ab-interchange
-    data-ab-interchange-src="[xxx, smallOnly], [xxx, medium]"/>
-</picture>
 ```
 
 

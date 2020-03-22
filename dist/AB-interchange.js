@@ -131,6 +131,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   window.CustomEvent = CustomEvent;
 })();
 
+
 // throttle events with requestAnimationFrame
 (function() {
   var throttle = function(type, name) {
@@ -139,9 +140,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       if (running) return;
 
       running = true;
-        window.requestAnimationFrame(function() {
-          window.dispatchEvent(new CustomEvent(name));
-          running = false;
+      window.requestAnimationFrame(function() {
+        window.dispatchEvent(new CustomEvent(name));
+        running = false;
       });
     };
     window.addEventListener(type, func);
@@ -158,10 +159,10 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 window.AB = {
   // deep extend function
   extend: function() {
-    var extended = {},
-        deep     = false,
-        i        = 0,
-        length   = arguments.length;
+    var extended = {};
+    var deep = false;
+    var i = 0;
+    var length = arguments.length;
 
     if (Object.prototype.toString.call(arguments[0]) === '[object Boolean]'){
       deep = arguments[0];
@@ -202,14 +203,15 @@ window.AB = {
       window.AB.plugins[plugin](window.AB.options[plugin]);
     } else {
       for(var options in AB.options){
-        if(window.AB.options.hasOwnProperty(options))
+        if(window.AB.options.hasOwnProperty(options)) {
           window.AB.plugins[options](window.AB.options[options]);
+        }
       }
     }
   },
 
   plugins: {},
-  options: {}
+  options: {},
 };
 
 module.exports = window.AB;
@@ -223,7 +225,7 @@ var mediaQuery = function(opt) {
   window.AB.mediaQuery = (function() {
     var _settings = opt || {bp: {}};
 
-    var _getCurrent = function() {
+    function _getCurrent() {
       var sizes = [];
 
       for (var key in _settings.bp) {
@@ -233,9 +235,9 @@ var mediaQuery = function(opt) {
       }
 
       return sizes;
-    };
+    }
 
-    var _updateSizes = function() {
+    function _updateSizes() {
       var newSize = _getCurrent();
 
       // check if it's updated
@@ -243,12 +245,11 @@ var mediaQuery = function(opt) {
         _currentStore = newSize;
         window.dispatchEvent(new CustomEvent('changed.ab-mediaquery'));
       }
-    };
+    }
 
-    var is = function(size) {
-      if (_settings.bp[size])
-        return window.matchMedia(_settings.bp[size]).matches;
-    };
+    function is(size) {
+      return _settings.bp[size] ? window.matchMedia(_settings.bp[size]).matches : false;
+    }
 
     // get current breakpoints
     var _currentStore = _getCurrent()
@@ -273,13 +274,12 @@ module.exports = window.AB;
 window.AB = require('ab-mediaquery');
 var pluginName = 'abInterchange';
 var attr = 'data-ab-interchange';
-var attrSrc = 'data-ab-interchange-src';
+var attrSrc = attr + '-src';
 var defaultSettings = {
-  mode: 'img',
+  mode: 'lazy-img',
   lazySettings: {
     offscreen: 1.25,
-    delayed: false,
-    layout: 'fluid' // 'fixed': fixed dimensions
+    layout: 'fluid' // or 'fixed' for fixed dimensions
 
   }
 }; // Run right methods depending on 'mode'
@@ -288,11 +288,6 @@ function _replace() {
   if (this._replaced) return;
 
   switch (this.mode) {
-    case 'img':
-      _replaceImg.call(this);
-
-      break;
-
     case 'lazy-img':
       _replaceImg.call(this, true);
 
@@ -308,7 +303,7 @@ function _replace() {
 
       break;
   }
-} // Replace source: img or lazy-img
+} // Replace source: lazy-img
 
 
 function _replaceImg(lazy) {
@@ -324,35 +319,8 @@ function _replaceImg(lazy) {
 
 function _replaceBackground(lazy) {
   if (this.el.style.backgroundImage === 'url("' + this.currentPath + '")' || lazy && !this.inView()) return;
-
-  if (this.currentPath) {
-    this.el.style.backgroundImage = 'url(' + this.currentPath + ')';
-  } else {
-    this.el.style.backgroundImage = 'none';
-  }
-
+  this.el.style.backgroundImage = this.currentPath ? 'url(' + this.currentPath + ')' : 'none';
   this.el.addEventListener('load', _isReplaced.bind(this));
-} // init instance
-
-
-function _init() {
-  var that = this; // no need when using 'img' on browsers supporting that, except when using lazy loading
-
-  if ((this.el.parentNode.tagName === 'PICTURE' || this.el.getAttribute('srcset')) && window.HTMLPictureElement) return; // replace anyway after a delay (for offline support)
-
-  if (this.settings.lazySettings.delayed) {
-    this._lazyTimer = setTimeout(function () {
-      _replace.call(that);
-    }, this.settings.lazySettings.delayed);
-  }
-
-  _setPlaceholder.call(this);
-
-  _events.call(this);
-
-  _generateRules.call(this);
-
-  _updatePath.call(this);
 } // build the DOM for lazy-img mode
 
 
@@ -381,14 +349,8 @@ function _setPlaceholder() {
   placeholderNode.classList.add('ab-interchange-placeholder');
   placeholderNode.style.paddingTop = (height / width * 100).toFixed(2) + "%";
   imgNode.style.position = 'absolute';
-  imgNode.style.top = 0;
-  imgNode.style.right = 0;
-  imgNode.style.bottom = 0;
-  imgNode.style.left = 0;
-  imgNode.style.maxHeight = '100%';
-  imgNode.style.minHeight = '100%';
-  imgNode.style.maxWidth = '100%';
-  imgNode.style.minWidth = '100%';
+  imgNode.style.top = imgNode.style.right = imgNode.style.bottom = imgNode.style.left = 0;
+  imgNode.style.maxHeight = imgNode.style.minHeight = imgNode.style.maxWidth = imgNode.style.minWidth = '100%';
   imgNode.style.height = 0;
   imgNode.alt = alt === null ? '' : alt; // always put an 'alt'
 
@@ -401,7 +363,7 @@ function _setPlaceholder() {
 
 function _isReplaced() {
   this.el.classList.remove('ab-interchange-loading');
-  var event = new CustomEvent('replaced.ab-interchange', {
+  var event = new CustomEvent(pluginName + '.replaced', {
     detail: {
       element: this.el
     }
@@ -425,6 +387,7 @@ function _events() {
       });
       observer.observe(this.el);
     } else {
+      // 'ab-scroll' is a custom event from AB dependency
       window.addEventListener('ab-scroll', _onScroll.bind(this));
     }
   }
@@ -432,9 +395,9 @@ function _events() {
 
 
 function _generateRules() {
-  var rulesList = []; // retro compatibility: sources inside 'attr'
-
-  var getAttrSrc = this.el.getAttribute(attrSrc) ? this.el.getAttribute(attrSrc) : this.el.getAttribute(attr);
+  // retro compatibility: sources inside 'attr'
+  var getAttrSrc = this.el.getAttribute(attrSrc) || this.el.getAttribute(attr);
+  var rulesList = [];
   var rules = getAttrSrc.match(/\[[^\]]+\]/g);
   var rule, path, query;
 
@@ -472,17 +435,8 @@ function _updatePath() {
 function _onScroll() {
   // when inView, no need to use 'delayed'
   if (this.inView() && !this._replaced) {
-    clearTimeout(this._lazyTimer);
-
     _replace.call(this);
   }
-} // define the right mode
-
-
-function _defineMode() {
-  // if img tag: no choice
-  if (this.el.tagName === 'IMG') return 'img';
-  return this.settings.mode;
 } // get width and height from attributes and manage multiple dimensions
 
 
@@ -508,6 +462,17 @@ function _getWidthHeight() {
     width: width,
     height: height
   };
+} // init instance
+
+
+function _init() {
+  _setPlaceholder.call(this);
+
+  _events.call(this);
+
+  _generateRules.call(this);
+
+  _updatePath.call(this);
 }
 
 var Plugin = function Plugin(el, options) {
@@ -516,17 +481,18 @@ var Plugin = function Plugin(el, options) {
   this.settings = window.AB.extend(true, defaultSettings, options, dataOptions);
   this.rules = [];
   this.currentPath = '';
-  this.mode = _defineMode.call(this);
+  this.mode = this.settings.mode;
   this.replaced = false;
-  this._lazyTimer; // for delayed setTimeout
-
   this._imgNode = this.el; // where the source will be updated
+  // no need when using 'img' on browsers supporting that, except when using lazy loading
+
+  if ((this.el.tagName === 'IMG' || this.el.parentNode.tagName === 'PICTURE' || this.el.getAttribute('srcset')) && window.HTMLPictureElement) return;
 
   _init.call(this);
 };
 
 Plugin.prototype = {
-  // Force elmeent refresh
+  // Force element refresh
   resetDisplay: function resetDisplay() {
     this._replaced = false;
 
