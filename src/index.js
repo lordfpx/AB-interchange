@@ -163,8 +163,7 @@ function _updatePath() {
   }
 
   // if path hasn't changed, return
-  if (this.currentPath === path)
-    return;
+  if (this.currentPath === path) return;
 
   this.currentPath = path;
   _replace.call(this);
