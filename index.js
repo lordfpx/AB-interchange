@@ -54,8 +54,11 @@ Plugin.prototype = {
 
     this._setPlaceholder()
         ._events()
-        ._generateRules()
-        ._updatePath();
+        ._generateRules();
+
+    if (this._updatePath()) {
+      this._replace();
+    }
   },
 
   _defineMode: function() {
@@ -176,7 +179,7 @@ Plugin.prototype = {
 
     // if already replaced, we stop
     if (this.replaced)
-      return this;
+      return false;
 
     // Iterate through each rule
     for (var i = 0, len = rules.length; i < len; i++) {
@@ -186,12 +189,11 @@ Plugin.prototype = {
 
     // if path hasn't changed, return
     if (this.currentPath === path)
-      return this;
+      return false;
 
     this.currentPath = path;
-    this._replace();
 
-    return this;
+    return true;
   },
 
   _onScroll: function() {
@@ -217,8 +219,11 @@ Plugin.prototype = {
 
   _resetDisplay: function() {
     this.replaced = false;
-    this._setPlaceholder()
-        ._updatePath();
+
+    if (this._updatePath()) {
+      this._setPlaceholder();
+      this._replace();
+    }
   },
 
   _inView: function() {
@@ -266,7 +271,7 @@ Plugin.prototype = {
     else
       replaceNode = this.el;
 
-    if (replaceNode === this.currentPath)
+    if (replaceNode.src === this.currentPath)
       return this;
 
     replaceNode.src = this.currentPath;
